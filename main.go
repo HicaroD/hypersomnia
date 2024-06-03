@@ -11,18 +11,36 @@ var BACKGROUND_COLOR tcell.Color = tcell.NewRGBColor(28, 28, 28)
 //go:embed ascii_art.txt
 var WELCOME_MESSAGE string
 
-func main() {
+type Hyper struct {
+	app       *tview.Application
+	pages     *tview.Pages
+	navigator *HyperNavigator
+}
+
+func NewHyper() *Hyper {
 	app := tview.NewApplication()
+	pages := tview.NewPages()
+	return &Hyper{app: app, pages: pages, navigator: SetupPages(pages)}
+}
 
-	welcomeText := tview.NewTextView()
-	welcomeText.SetBorder(true)
-	welcomeText.SetText(WELCOME_MESSAGE)
-	welcomeText.SetTextColor(tcell.ColorDodgerBlue)
-	welcomeText.SetTextAlign(tview.AlignCenter)
-	welcomeText.SetBackgroundColor(BACKGROUND_COLOR)
+func (hyper *Hyper) Run() {
+	hyper.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlP:
+			hyper.navigator.Navigate(COLLECTIONS)
+			return event
+		}
+		return event
+	})
 
-	app.SetRoot(welcomeText, true)
-	if err := app.Run(); err != nil {
+	hyper.navigator.Navigate(WELCOME)
+	hyper.app.SetRoot(hyper.pages, true)
+	if err := hyper.app.Run(); err != nil {
 		panic(err)
 	}
+}
+
+func main() {
+	app := NewHyper()
+	app.Run()
 }
