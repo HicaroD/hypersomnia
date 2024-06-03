@@ -26,7 +26,11 @@ type HyperNavigator struct {
 }
 
 func SetupPages(pages *tview.Pages) *HyperNavigator {
-	hyperPages := HyperNavigator{pages: pages, mapper: map[HyperPageIndex]HyperPage{}, currentPage: -1}
+	hyperPages := HyperNavigator{
+		pages:       pages,
+		mapper:      map[HyperPageIndex]HyperPage{},
+		currentPage: -1,
+	}
 
 	hyperPages.mapper[WELCOME] = buildWelcomePage()
 	hyperPages.mapper[COLLECTIONS] = buildCollectionsPage()
@@ -44,8 +48,8 @@ func (navigator *HyperNavigator) GetPage(index HyperPageIndex) HyperPage {
 
 func (navigator *HyperNavigator) Navigate(index HyperPageIndex) {
 	page := navigator.GetPage(index)
-	navigator.currentPage = index
 	navigator.pages = navigator.pages.AddAndSwitchToPage(page.name, page.page, true)
+	navigator.currentPage = index
 }
 
 func buildWelcomePage() HyperPage {
@@ -59,10 +63,35 @@ func buildWelcomePage() HyperPage {
 }
 
 func buildCollectionsPage() HyperPage {
-	tv := tview.NewTextView()
-	tv.SetBorder(true)
-	tv.SetText("TODO: Collections page")
-	tv.SetBackgroundColor(BACKGROUND_COLOR)
+	collections := tview.NewFlex()
+	collections.SetBorder(true)
+	collections.SetDirection(tview.FlexColumn)
+	collections.SetBackgroundColor(BACKGROUND_COLOR)
 
-	return HyperPage{"collections", tv}
+	endpoints := tview.NewFlex()
+	endpoints.SetBorder(true)
+	endpoints.SetDirection(tview.FlexColumn)
+	endpoints.SetBackgroundColor(BACKGROUND_COLOR)
+	endpoints.AddItem(
+		tview.NewList().
+			AddItem("First endpoint", "", '0', nil),
+		0,
+		1,
+		false,
+	)
+	collections.AddItem(endpoints, 0, 2, false)
+
+	collections.AddItem(
+		tview.NewBox().
+			SetTitle("Request").
+			SetBorder(true).
+			SetBackgroundColor(BACKGROUND_COLOR),
+		0,
+		4,
+		false,
+	)
+
+	collections.AddItem(tview.NewBox().SetTitle("Response").SetBorder(true), 0, 4, false)
+
+	return HyperPage{"collections", collections}
 }
