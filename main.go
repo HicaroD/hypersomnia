@@ -1,11 +1,12 @@
 package main
 
 import (
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 )
 
 var BACKGROUND_COLOR tcell.Color = tcell.NewRGBColor(28, 28, 28)
+
 var WELCOME_MESSAGE string = `
  _   _                                                 _       
 | | | |                                               (_)      
@@ -20,22 +21,17 @@ var WELCOME_MESSAGE string = `
 `
 
 func main() {
-	app := tview.NewApplication()
+	app := cview.NewApplication()
 
-	pages := tview.NewPages()
-	pages.SetBackgroundColor(BACKGROUND_COLOR)
+	welcomeText := cview.NewTextView()
+	welcomeText.SetBorder(true)
+	welcomeText.SetText(WELCOME_MESSAGE)
+	welcomeText.SetTextColor(tcell.ColorDodgerBlue)
+	welcomeText.SetTextAlign(cview.AlignCenter)
+	welcomeText.SetBackgroundColor(BACKGROUND_COLOR)
 
-	welcomeText :=
-		tview.NewTextView().
-			SetSize(0, 0).
-			SetText(WELCOME_MESSAGE).
-			SetTextColor(tcell.ColorWhite).
-			SetTextAlign(tview.AlignCenter).
-			SetBackgroundColor(BACKGROUND_COLOR).
-			SetBorder(true)
-
-	pages.AddPage("", welcomeText, false, true)
-	if err := app.SetRoot(pages, true).Run(); err != nil {
+	app.SetRoot(welcomeText, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }
