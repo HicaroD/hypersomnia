@@ -13,14 +13,14 @@ var WELCOME_MESSAGE string
 
 type Hyper struct {
 	app       *tview.Application
-	pages     *tview.Pages
 	navigator *HyperNavigator
 }
 
 func NewHyper() *Hyper {
 	app := tview.NewApplication()
 	pages := tview.NewPages()
-	return &Hyper{app: app, pages: pages, navigator: SetupPages(pages)}
+	app.SetRoot(pages, true)
+	return &Hyper{app: app, navigator: SetupPages(pages)}
 }
 
 func (hyper *Hyper) Run() {
@@ -34,7 +34,6 @@ func (hyper *Hyper) Run() {
 	})
 
 	hyper.navigator.Navigate(WELCOME)
-	hyper.app.SetRoot(hyper.pages, true)
 	if err := hyper.app.Run(); err != nil {
 		panic(err)
 	}
