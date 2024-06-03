@@ -26,7 +26,7 @@ func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlE:
-			hyper.navigator.Navigate(COLLECTIONS)
+			hyper.navigator.Navigate(ENDPOINTS)
 			return event
 		}
 		return event

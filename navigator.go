@@ -11,7 +11,7 @@ type HyperPageIndex int
 
 const (
 	WELCOME HyperPageIndex = iota
-	COLLECTIONS
+	ENDPOINTS
 )
 
 type HyperPage struct {
@@ -33,7 +33,7 @@ func SetupPages(pages *tview.Pages) *HyperNavigator {
 	}
 
 	hyperPages.mapper[WELCOME] = buildWelcomePage()
-	hyperPages.mapper[COLLECTIONS] = buildCollectionsPage()
+	hyperPages.mapper[ENDPOINTS] = buildEndpointsPage()
 
 	return &hyperPages
 }
@@ -62,7 +62,7 @@ func buildWelcomePage() HyperPage {
 	return HyperPage{"welcome", welcomeText}
 }
 
-func buildCollectionsPage() HyperPage {
+func buildEndpointsPage() HyperPage {
 	collections := tview.NewFlex()
 	collections.SetBorder(true)
 	collections.SetDirection(tview.FlexColumn)
