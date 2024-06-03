@@ -2,11 +2,10 @@ package main
 
 import (
 	_ "embed"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
-
-var BACKGROUND_COLOR tcell.Color = tcell.NewRGBColor(28, 28, 28)
 
 //go:embed ascii_art.txt
 var WELCOME_MESSAGE string
@@ -26,7 +25,7 @@ func NewHyper() *Hyper {
 func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
-		case tcell.KeyCtrlP:
+		case tcell.KeyCtrlE:
 			hyper.navigator.Navigate(COLLECTIONS)
 			return event
 		}

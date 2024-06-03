@@ -20,12 +20,13 @@ type HyperPage struct {
 }
 
 type HyperNavigator struct {
-	pages  *tview.Pages
-	mapper map[HyperPageIndex]HyperPage
+	pages       *tview.Pages
+	mapper      map[HyperPageIndex]HyperPage
+	currentPage HyperPageIndex
 }
 
 func SetupPages(pages *tview.Pages) *HyperNavigator {
-	hyperPages := HyperNavigator{pages: pages, mapper: map[HyperPageIndex]HyperPage{}}
+	hyperPages := HyperNavigator{pages: pages, mapper: map[HyperPageIndex]HyperPage{}, currentPage: -1}
 
 	hyperPages.mapper[WELCOME] = buildWelcomePage()
 	hyperPages.mapper[COLLECTIONS] = buildCollectionsPage()
@@ -43,6 +44,7 @@ func (navigator *HyperNavigator) GetPage(index HyperPageIndex) HyperPage {
 
 func (navigator *HyperNavigator) Navigate(index HyperPageIndex) {
 	page := navigator.GetPage(index)
+	navigator.currentPage = index
 	navigator.pages = navigator.pages.AddAndSwitchToPage(page.name, page.page, true)
 }
 
@@ -57,6 +59,10 @@ func buildWelcomePage() HyperPage {
 }
 
 func buildCollectionsPage() HyperPage {
-	tv := tview.NewTextView().SetText("WASSUP MY BOY")
+	tv := tview.NewTextView()
+	tv.SetBorder(true)
+	tv.SetText("TODO: Collections page")
+	tv.SetBackgroundColor(BACKGROUND_COLOR)
+
 	return HyperPage{"collections", tv}
 }
