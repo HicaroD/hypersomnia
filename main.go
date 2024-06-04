@@ -24,10 +24,10 @@ func NewHyper() *Hyper {
 
 func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyCtrlE:
-			hyper.navigator.Navigate(ENDPOINTS)
-			return event
+		pressedKey := event.Key()
+		pageIndex, ok := KEY_TO_PAGE[pressedKey]
+		if ok {
+			hyper.navigator.Navigate(pageIndex)
 		}
 		return event
 	})

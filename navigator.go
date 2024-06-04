@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -12,6 +13,11 @@ const (
 	WELCOME HyperPageIndex = iota
 	ENDPOINTS
 )
+
+var KEY_TO_PAGE map[tcell.Key]HyperPageIndex = map[tcell.Key]HyperPageIndex{
+	tcell.KeyCtrlW: WELCOME,
+	tcell.KeyCtrlE: ENDPOINTS,
+}
 
 type HyperNavigator struct {
 	pages       *tview.Pages
