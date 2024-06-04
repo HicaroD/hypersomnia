@@ -33,7 +33,8 @@ func (hyper *Hyper) Run() {
 	})
 
 	hyper.navigator.Navigate(WELCOME)
-	if err := hyper.app.Run(); err != nil {
+
+	if err := hyper.app.EnablePaste(true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}
 }
