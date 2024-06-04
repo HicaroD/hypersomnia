@@ -26,8 +26,8 @@ func SetupPages(pages *tview.Pages) *HyperNavigator {
 		currentPage: -1,
 	}
 
-	hyperPages.mapper[WELCOME] = WelcomePage{}
-	hyperPages.mapper[ENDPOINTS] = EndpointsPage{}
+	hyperPages.mapper[WELCOME] = &WelcomePage{}
+	hyperPages.mapper[ENDPOINTS] = &EndpointsPage{}
 
 	return &hyperPages
 }

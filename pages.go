@@ -11,7 +11,7 @@ type HyperPage interface {
 
 type WelcomePage struct{}
 
-func (page WelcomePage) Build() (string, tview.Primitive) {
+func (page *WelcomePage) Build() (string, tview.Primitive) {
 	welcomeText := tview.NewTextView()
 	welcomeText.SetBorder(true)
 	welcomeText.SetText(WELCOME_MESSAGE)
@@ -23,7 +23,7 @@ func (page WelcomePage) Build() (string, tview.Primitive) {
 
 type EndpointsPage struct{}
 
-func (page EndpointsPage) Build() (string, tview.Primitive) {
+func (page *EndpointsPage) Build() (string, tview.Primitive) {
 	collections := tview.NewFlex()
 	collections.SetBorder(true)
 	collections.SetDirection(tview.FlexColumn)
