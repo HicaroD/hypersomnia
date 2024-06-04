@@ -76,7 +76,12 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 
 func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	methodDropdownInput := tview.NewForm()
-	methodDropdownInput.AddDropDown("Method", []string{"GET", "POST"}, 0, nil)
+	methodDropdownInput.AddDropDown(
+		"Method",
+		[]string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "CONNECT", "OPTIONS", "TRACE"},
+		0,
+		nil,
+	)
 	methodDropdownInput.SetBackgroundColor(DARK_GREY)
 
 	urlInput := tview.NewForm()
@@ -86,7 +91,7 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	urlForm := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		AddItem(methodDropdownInput, 0, 1, false).
-		AddItem(urlInput, 0, 4, false)
+		AddItem(urlInput, 0, 3, false)
 
 	queryParametersArea := tview.NewTextArea()
 	queryParametersArea.SetBorder(true)
