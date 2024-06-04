@@ -17,42 +17,87 @@ func (page *WelcomePage) Build() (string, tview.Primitive) {
 	welcomeText.SetText(WELCOME_MESSAGE)
 	welcomeText.SetTextColor(tcell.ColorDodgerBlue)
 	welcomeText.SetTextAlign(tview.AlignCenter)
-	welcomeText.SetBackgroundColor(BACKGROUND_COLOR)
+	welcomeText.SetBackgroundColor(WELCOME_DARK_BACKGROUND)
 	return "welcome", welcomeText
 }
 
 type EndpointsPage struct{}
 
 func (page *EndpointsPage) Build() (string, tview.Primitive) {
-	collections := tview.NewFlex()
-	collections.SetBorder(true)
-	collections.SetDirection(tview.FlexColumn)
-	collections.SetBackgroundColor(BACKGROUND_COLOR)
+	main := tview.NewFlex()
+	main.SetBorder(true)
+	main.SetDirection(tview.FlexColumn)
+	main.SetBackgroundColor(DARK_GREY)
 
-	endpoints := tview.NewFlex()
-	endpoints.SetBorder(true)
-	endpoints.SetDirection(tview.FlexColumn)
-	endpoints.SetBackgroundColor(BACKGROUND_COLOR)
-	endpoints.AddItem(
-		tview.NewList().
-			AddItem("First endpoint", "", '0', nil),
+	endpointsSection := page.buildEndpointsSection()
+	main.AddItem(
+		endpointsSection,
 		0,
-		1,
+		2,
 		false,
 	)
-	collections.AddItem(endpoints, 0, 2, false)
 
-	collections.AddItem(
-		tview.NewBox().
-			SetTitle("Request").
-			SetBorder(true).
-			SetBackgroundColor(BACKGROUND_COLOR),
+	requestSection := page.buildRequestSection()
+	main.AddItem(
+		requestSection,
 		0,
 		4,
 		false,
 	)
 
-	collections.AddItem(tview.NewBox().SetTitle("Response").SetBorder(true), 0, 4, false)
+	responseSection := page.buildResponseSection()
+	main.AddItem(
+		responseSection,
+		0,
+		4,
+		false,
+	)
 
-	return "collections", collections
+	return "collections", main
+}
+
+func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
+	endpoints := tview.NewFlex()
+	endpoints.SetBorder(true)
+	endpoints.SetDirection(tview.FlexColumn)
+	list := tview.NewList()
+	list.SetBackgroundColor(DARK_GREY)
+	endpoints.AddItem(
+		list.AddItem("First endpoint", "", '0', nil).
+			AddItem("Second endpoint", "", '1', nil),
+		0,
+		1,
+		false,
+	)
+	endpoints.SetBackgroundColor(DARK_GREY)
+	endpoints.SetTitle("Endpoints")
+	return endpoints
+}
+
+func (page *EndpointsPage) buildRequestSection() tview.Primitive {
+	methodDropdownInput := tview.NewForm()
+	methodDropdownInput.AddDropDown("[white]Method", []string{"GET", "POST"}, 0, nil)
+	methodDropdownInput.SetBackgroundColor(DARK_GREY)
+
+	urlInput := tview.NewForm()
+	urlInput.AddInputField("[white]URL", "", 0, nil, nil)
+	urlInput.SetBackgroundColor(DARK_GREY)
+
+	requestForm := tview.NewFlex().
+		SetDirection(tview.FlexColumn).
+		AddItem(methodDropdownInput, 0, 1, true).
+		AddItem(urlInput, 0, 4, false)
+	requestForm.SetBorder(true)
+	requestForm.SetBackgroundColor(DARK_GREY)
+	requestForm.SetTitle("Request")
+
+	return requestForm
+}
+
+func (page *EndpointsPage) buildResponseSection() tview.Primitive {
+	responseBox := tview.NewBox()
+	responseBox.SetTitle("Response")
+	responseBox.SetBorder(true)
+	responseBox.SetBackgroundColor(DARK_GREY)
+	return responseBox
 }
