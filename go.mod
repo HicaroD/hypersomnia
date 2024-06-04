@@ -1,4 +1,4 @@
-module github.com/HicaroD/hypersomnia.go
+module github.com/HicaroD/hypersomnia
 
 go 1.22.2
 
