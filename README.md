@@ -2,7 +2,6 @@
   <image src="./docs/images/welcome.png" />
 </div>
 
-
 # Hypersomnia
 
 It may seem absurd, but Hypersomnia is better than Insomnia.
