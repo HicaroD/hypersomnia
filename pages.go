@@ -76,17 +76,40 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 
 func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	methodDropdownInput := tview.NewForm()
-	methodDropdownInput.AddDropDown("[white]Method", []string{"GET", "POST"}, 0, nil)
+	methodDropdownInput.AddDropDown("Method", []string{"GET", "POST"}, 0, nil)
 	methodDropdownInput.SetBackgroundColor(DARK_GREY)
 
 	urlInput := tview.NewForm()
-	urlInput.AddInputField("[white]URL", "", 0, nil, nil)
+	urlInput.AddInputField("URL", "", 0, nil, nil)
 	urlInput.SetBackgroundColor(DARK_GREY)
 
-	requestForm := tview.NewFlex().
+	urlForm := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(methodDropdownInput, 0, 1, true).
+		AddItem(methodDropdownInput, 0, 1, false).
 		AddItem(urlInput, 0, 4, false)
+
+	queryParametersArea := tview.NewTextArea()
+	queryParametersArea.SetBorder(true)
+	queryParametersArea.SetTitle("Query parameters")
+	queryParametersArea.SetBackgroundColor(DARK_GREY)
+
+	requestBodyArea := tview.NewTextArea()
+	requestBodyArea.SetBorder(true)
+	requestBodyArea.SetTitle("Body")
+	requestBodyArea.SetBackgroundColor(DARK_GREY)
+
+	headersArea := tview.NewTextArea()
+	headersArea.SetBorder(true)
+	headersArea.SetTitle("Headers")
+	headersArea.SetBackgroundColor(DARK_GREY)
+
+	requestForm := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(urlForm, 0, 1, false).
+		AddItem(queryParametersArea, 0, 1, false).
+		AddItem(requestBodyArea, 0, 3, false).
+		AddItem(headersArea, 0, 2, false)
+
 	requestForm.SetBorder(true)
 	requestForm.SetBackgroundColor(DARK_GREY)
 	requestForm.SetTitle("Request")
