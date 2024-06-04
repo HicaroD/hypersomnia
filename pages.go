@@ -111,9 +111,9 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	requestForm := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(urlForm, 0, 1, false).
-		AddItem(requestBodyArea, 0, 3, false).
-		AddItem(queryParametersArea, 0, 1, false).
-		AddItem(headersArea, 0, 1, false)
+		AddItem(requestBodyArea, 0, 4, false).
+		AddItem(queryParametersArea, 0, 2, false).
+		AddItem(headersArea, 0, 2, false)
 
 	requestForm.SetBorder(true)
 	requestForm.SetBackgroundColor(DARK_GREY)
