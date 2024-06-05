@@ -32,4 +32,4 @@
        |___/|_|                                                
 
 
-Press ? for help
+Press ^-h for help
