@@ -10,7 +10,7 @@
 =(  _____| (_________|   
 
 
-Wants to learn about all keybindings or documentation in general? Go to https://github.com/HicaroD/hypersomnia#hypersomnia 
-Wants to report a bug? Create a new issue here on https://github.com/HicaroD/hypersomnia/issues                            
-Wants to contribute? PRs welcome on https://github.com/HicaroD/hypersomnia/pulls                                           
+Wants to read the documentation? Go to https://github.com/HicaroD/hypersomnia#hypersomnia 
+Wants to report a bug? Feel free to create a new issue here on https://github.com/HicaroD/hypersomnia/issues                            
+Wants to contribute? PRs are welcome on https://github.com/HicaroD/hypersomnia/pulls                                           
 
