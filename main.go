@@ -1,14 +1,9 @@
 package main
 
 import (
-	_ "embed"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
-
-//go:embed ascii_art.txt
-var WELCOME_MESSAGE string
 
 type Hyper struct {
 	app       *tview.Application

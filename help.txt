@@ -1,0 +1,16 @@
+                         
+                         
+  ,-~~-.___.             
+ / |  '     \            
+(  )         0           
+ \_/-, ,----'            
+    ====           //    
+   /  \-'~;    /~~~(O)   
+  /  __/~|   /       |   
+=(  _____| (_________|   
+
+
+Wants to learn about all keybindings or documentation in general? Go to https://github.com/HicaroD/hypersomnia#hypersomnia 
+Wants to report a bug? Create a new issue here on https://github.com/HicaroD/hypersomnia/issues                            
+Wants to contribute? PRs welcome on https://github.com/HicaroD/hypersomnia/pulls                                           
+

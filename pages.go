@@ -1,9 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
+
+//go:embed ascii_art.txt
+var WELCOME_MESSAGE string
+
+//go:embed help.txt
+var HELP_MESSAGE string
 
 type HyperPage interface {
 	Build() (string, tview.Primitive)
@@ -12,13 +19,13 @@ type HyperPage interface {
 type WelcomePage struct{}
 
 func (page *WelcomePage) Build() (string, tview.Primitive) {
-	welcomeText := tview.NewTextView()
-	welcomeText.SetBorder(true)
-	welcomeText.SetText(WELCOME_MESSAGE)
-	welcomeText.SetTextColor(tcell.ColorDodgerBlue)
-	welcomeText.SetTextAlign(tview.AlignCenter)
-	welcomeText.SetBackgroundColor(WELCOME_DARK_BACKGROUND)
-	return "welcome", welcomeText
+	welcome := tview.NewTextView()
+	welcome.SetBorder(true)
+	welcome.SetText(WELCOME_MESSAGE)
+	welcome.SetTextColor(tcell.ColorDodgerBlue)
+	welcome.SetTextAlign(tview.AlignCenter)
+	welcome.SetBackgroundColor(WELCOME_DARK_BACKGROUND)
+	return "welcome", welcome
 }
 
 type EndpointsPage struct{}
@@ -128,4 +135,16 @@ func (page *EndpointsPage) buildResponseSection() tview.Primitive {
 	responseBox.SetBorder(true)
 	responseBox.SetBackgroundColor(DARK_GREY)
 	return responseBox
+}
+
+type HelpPage struct{}
+
+func (page *HelpPage) Build() (string, tview.Primitive) {
+	help := tview.NewTextView()
+	help.SetBorder(true)
+	help.SetText(HELP_MESSAGE)
+	help.SetTextColor(tcell.ColorDodgerBlue)
+	help.SetTextAlign(tview.AlignCenter)
+	help.SetBackgroundColor(WELCOME_DARK_BACKGROUND)
+	return "help", help
 }

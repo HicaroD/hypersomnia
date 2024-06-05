@@ -12,11 +12,13 @@ type HyperPageIndex int
 const (
 	WELCOME HyperPageIndex = iota
 	ENDPOINTS
+	HELP
 )
 
 var KEY_TO_PAGE map[tcell.Key]HyperPageIndex = map[tcell.Key]HyperPageIndex{
 	tcell.KeyCtrlW: WELCOME,
 	tcell.KeyCtrlE: ENDPOINTS,
+	tcell.KeyCtrlH: HELP,
 }
 
 type HyperNavigator struct {
@@ -34,6 +36,7 @@ func SetupPages(pages *tview.Pages) *HyperNavigator {
 
 	hyperPages.mapper[WELCOME] = &WelcomePage{}
 	hyperPages.mapper[ENDPOINTS] = &EndpointsPage{}
+	hyperPages.mapper[HELP] = &HelpPage{}
 
 	return &hyperPages
 }
