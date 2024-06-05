@@ -67,11 +67,16 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	endpoints := tview.NewFlex()
 	endpoints.SetBorder(true)
 	endpoints.SetDirection(tview.FlexColumn)
+
 	list := tview.NewList()
 	list.SetBackgroundColor(DARK_GREY)
+	list.SetMainTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	list.SetShortcutStyle(tcell.StyleDefault.Background(DARK_GREY))
+	list.AddItem("First endpoint", "", '0', nil)
+	list.AddItem("Second endpoint", "", '1', nil)
+
 	endpoints.AddItem(
-		list.AddItem("First endpoint", "", '0', nil).
-			AddItem("Second endpoint", "", '1', nil),
+		list,
 		0,
 		1,
 		false,
@@ -119,25 +124,28 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 		AddItem(methodDropdown, 0, 1, false).
 		AddItem(urlInput, 0, 5, false)
 
-	queryParametersArea := tview.NewTextArea()
-	queryParametersArea.SetBorder(true)
-	queryParametersArea.SetTitle("Query parameters")
-	queryParametersArea.SetBackgroundColor(DARK_GREY)
-
 	requestBodyArea := tview.NewTextArea()
 	requestBodyArea.SetBorder(true)
 	requestBodyArea.SetTitle("Body")
 	requestBodyArea.SetBackgroundColor(DARK_GREY)
+	requestBodyArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+
+	queryParametersArea := tview.NewTextArea()
+	queryParametersArea.SetBorder(true)
+	queryParametersArea.SetTitle("Query parameters")
+	queryParametersArea.SetBackgroundColor(DARK_GREY)
+	queryParametersArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
 
 	headersArea := tview.NewTextArea()
 	headersArea.SetBorder(true)
 	headersArea.SetTitle("Headers")
 	headersArea.SetBackgroundColor(DARK_GREY)
+	headersArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
 
 	requestForm := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(urlForm, 0, 1, false).
-		AddItem(requestBodyArea, 0, 6, false).
+		AddItem(requestBodyArea, 0, 7, false).
 		AddItem(queryParametersArea, 0, 2, false).
 		AddItem(headersArea, 0, 2, false)
 
