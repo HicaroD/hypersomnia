@@ -82,23 +82,42 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 }
 
 func (page *EndpointsPage) buildRequestSection() tview.Primitive {
-	methodDropdownInput := tview.NewForm()
-	methodDropdownInput.AddDropDown(
-		"Method",
-		[]string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "CONNECT", "OPTIONS", "TRACE"},
-		0,
+	methodDropdown := tview.NewDropDown()
+	methods := []string{
+		"GET",
+		"POST",
+		"PUT",
+		"DELETE",
+		"PATCH",
+		"HEAD",
+		"CONNECT",
+		"OPTIONS",
+		"TRACE",
+	}
+	defaultOption := 0 // GET
+	methodDropdown.SetOptions(
+		methods,
+		// TODO: selected callback
 		nil,
 	)
-	methodDropdownInput.SetBackgroundColor(DARK_GREY)
+	methodDropdown.SetCurrentOption(defaultOption)
+	methodDropdown.SetFieldBackgroundColor(DARK_GREY)
+	methodDropdown.SetBorder(true)
+	methodDropdown.SetBackgroundColor(DARK_GREY)
 
-	urlInput := tview.NewForm()
-	urlInput.AddInputField("URL", "", 0, nil, nil)
+	urlInput := tview.NewInputField()
+	urlInput.SetBorder(true)
+	urlInput.SetFieldBackgroundColor(DARK_GREY)
 	urlInput.SetBackgroundColor(DARK_GREY)
+	urlInput.SetPlaceholder("https://google.com/")
+	urlInput.SetPlaceholderStyle(tcell.StyleDefault.Background(DARK_GREY))
+	urlInput.SetPlaceholderTextColor(tcell.ColorGrey)
+	// TODO: set paste handler callback to only accept links (if necessary)
 
 	urlForm := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(methodDropdownInput, 0, 1, false).
-		AddItem(urlInput, 0, 3, false)
+		AddItem(methodDropdown, 0, 1, false).
+		AddItem(urlInput, 0, 5, false)
 
 	queryParametersArea := tview.NewTextArea()
 	queryParametersArea.SetBorder(true)
@@ -118,7 +137,7 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	requestForm := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(urlForm, 0, 1, false).
-		AddItem(requestBodyArea, 0, 4, false).
+		AddItem(requestBodyArea, 0, 6, false).
 		AddItem(queryParametersArea, 0, 2, false).
 		AddItem(headersArea, 0, 2, false)
 
