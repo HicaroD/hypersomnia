@@ -27,7 +27,7 @@ type HyperNavigator struct {
 	currentPage HyperPageIndex
 }
 
-func SetupPages(pages *tview.Pages) *HyperNavigator {
+func NewNavigator(pages *tview.Pages) *HyperNavigator {
 	hyperPages := HyperNavigator{
 		pages:       pages,
 		mapper:      map[HyperPageIndex]HyperPage{},
@@ -35,7 +35,15 @@ func SetupPages(pages *tview.Pages) *HyperNavigator {
 	}
 
 	hyperPages.mapper[WELCOME] = &WelcomePage{}
-	hyperPages.mapper[ENDPOINTS] = &EndpointsPage{}
+
+	// TODO: create a struct that stores the content from the endpoint page
+	// in order to store the data written in each text area
+	hyperPages.mapper[ENDPOINTS] = &EndpointsPage{
+		requestBodyContent: func() {
+			fmt.Println("Hello from request body callback")
+		},
+	}
+
 	hyperPages.mapper[HELP] = &HelpPage{}
 
 	return &hyperPages

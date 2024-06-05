@@ -28,7 +28,9 @@ func (page *WelcomePage) Build() (string, tview.Primitive) {
 	return "welcome", welcome
 }
 
-type EndpointsPage struct{}
+type EndpointsPage struct {
+	requestBodyContent func()
+}
 
 func (page *EndpointsPage) Build() (string, tview.Primitive) {
 	main := tview.NewFlex()
@@ -129,6 +131,7 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	requestBodyArea.SetTitle("Body")
 	requestBodyArea.SetBackgroundColor(DARK_GREY)
 	requestBodyArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	requestBodyArea.SetChangedFunc(page.requestBodyContent)
 
 	queryParametersArea := tview.NewTextArea()
 	queryParametersArea.SetBorder(true)

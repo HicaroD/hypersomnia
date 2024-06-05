@@ -14,7 +14,7 @@ func NewHyper() *Hyper {
 	app := tview.NewApplication()
 	pages := tview.NewPages()
 	app.SetRoot(pages, true)
-	return &Hyper{app: app, navigator: SetupPages(pages)}
+	return &Hyper{app: app, navigator: NewNavigator(pages)}
 }
 
 func (hyper *Hyper) Run() {
