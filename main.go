@@ -12,8 +12,12 @@ type Hyper struct {
 
 func NewHyper() *Hyper {
 	app := tview.NewApplication()
+	app.EnablePaste(true)
+	app.EnableMouse(true)
+
 	pages := tview.NewPages()
 	app.SetRoot(pages, true)
+
 	return &Hyper{app: app, navigator: NewNavigator(pages)}
 }
 
@@ -29,7 +33,7 @@ func (hyper *Hyper) Run() {
 
 	hyper.navigator.Navigate(WELCOME)
 
-	if err := hyper.app.EnablePaste(true).EnableMouse(true).Run(); err != nil {
+	if err := hyper.app.Run(); err != nil {
 		panic(err)
 	}
 }

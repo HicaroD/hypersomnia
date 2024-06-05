@@ -39,9 +39,7 @@ func NewNavigator(pages *tview.Pages) *HyperNavigator {
 	// TODO: create a struct that stores the content from the endpoint page
 	// in order to store the data written in each text area
 	hyperPages.mapper[ENDPOINTS] = &EndpointsPage{
-		requestBodyContent: func() {
-			fmt.Println("Hello from request body callback")
-		},
+		requestBodyContent: func() {},
 	}
 
 	hyperPages.mapper[HELP] = &HelpPage{}
