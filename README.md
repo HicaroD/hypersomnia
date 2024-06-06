@@ -22,7 +22,8 @@ It may seem absurd, but Hypersomnia is better than Insomnia.
 | ------------------ | ------------ |
 | <kbd>C-Space</kbd> | Send request |
 
-> [!NOTE] > `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
+> [!NOTE]
+> `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
 
 ## License
 
