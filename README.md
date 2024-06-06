@@ -5,7 +5,7 @@
 
 # Hypersomnia
 
-Hypersomnia is a simple TUI application for testing your REST APIs.
+"Hypersomnia" is a simple TUI application for testing your REST APIs.
 
 ## Keybindings
 
