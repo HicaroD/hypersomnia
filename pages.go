@@ -63,13 +63,11 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlSpace:
-			// TODO: get data from form fields
 			_, selectedMethod := page.methods.GetCurrentOption()
 			url := page.url.GetText()
 			// body := page.body.GetText()
 			// query := page.query.GetText()
 			// headers := page.headers.GetText()
-
 			request, err := http.NewRequest(selectedMethod, url, nil)
 			if err != nil {
 				panic(err)
@@ -89,8 +87,8 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 				panic(err)
 			}
 			page.response.SetText(formattedJsonBuffer.String())
-
 			// TODO: deal with headers and query parameters
+			// TODO: deal with more than one kind of response, not only JSON
 		}
 		return event
 	})
