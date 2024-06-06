@@ -2,6 +2,11 @@ package main
 
 import (
 	_ "embed"
+	"io"
+	"time"
+
+	"net/http"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -29,7 +34,11 @@ func (page *WelcomePage) Build() (string, tview.Primitive) {
 }
 
 type EndpointsPage struct {
-	requestBodyContent func()
+	// Widgets
+	methods              *tview.DropDown
+	url                  *tview.InputField
+	body, query, headers *tview.TextArea
+	response             *tview.TextView
 }
 
 func (page *EndpointsPage) Build() (string, tview.Primitive) {
@@ -37,6 +46,40 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 	main.SetBorder(true)
 	main.SetDirection(tview.FlexColumn)
 	main.SetBackgroundColor(DARK_GREY)
+
+	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlSpace:
+			// TODO: get data from form fields
+			_, selectedMethod := page.methods.GetCurrentOption()
+			url := page.url.GetText()
+			// body := page.body.GetText()
+			// query := page.query.GetText()
+			// headers := page.headers.GetText()
+			// TODO: send HTTP request
+			request, err := http.NewRequest(selectedMethod, url, nil)
+			if err != nil {
+				panic(err)
+			}
+
+			client := http.Client{
+				Timeout: 30 * time.Second,
+			}
+			resp, err := client.Do(request)
+			if err != nil {
+				panic(err)
+			}
+
+			respBytes, err := io.ReadAll(resp.Body)
+			if err != nil {
+				panic(err)
+			}
+			respStr := string(respBytes[:])
+			page.response.SetText(respStr)
+			// TODO: deal with headers and query parameters
+		}
+		return event
+	})
 
 	endpointsSection := page.buildEndpointsSection()
 	main.AddItem(
@@ -111,6 +154,7 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	methodDropdown.SetFieldBackgroundColor(DARK_GREY)
 	methodDropdown.SetBorder(true)
 	methodDropdown.SetBackgroundColor(DARK_GREY)
+	page.methods = methodDropdown
 
 	urlInput := tview.NewInputField()
 	urlInput.SetBorder(true)
@@ -120,6 +164,7 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	urlInput.SetPlaceholderStyle(tcell.StyleDefault.Background(DARK_GREY))
 	urlInput.SetPlaceholderTextColor(tcell.ColorGrey)
 	// TODO: set paste handler callback to only accept links (if necessary)
+	page.url = urlInput
 
 	urlForm := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
@@ -131,19 +176,21 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	requestBodyArea.SetTitle("Body")
 	requestBodyArea.SetBackgroundColor(DARK_GREY)
 	requestBodyArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
-	requestBodyArea.SetChangedFunc(page.requestBodyContent)
+	page.body = requestBodyArea
 
 	queryParametersArea := tview.NewTextArea()
 	queryParametersArea.SetBorder(true)
 	queryParametersArea.SetTitle("Query parameters")
 	queryParametersArea.SetBackgroundColor(DARK_GREY)
 	queryParametersArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	page.query = queryParametersArea
 
 	headersArea := tview.NewTextArea()
 	headersArea.SetBorder(true)
 	headersArea.SetTitle("Headers")
 	headersArea.SetBackgroundColor(DARK_GREY)
 	headersArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	page.headers = headersArea
 
 	requestForm := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -160,11 +207,12 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 }
 
 func (page *EndpointsPage) buildResponseSection() tview.Primitive {
-	responseBox := tview.NewBox()
-	responseBox.SetTitle("Response")
-	responseBox.SetBorder(true)
-	responseBox.SetBackgroundColor(DARK_GREY)
-	return responseBox
+	response := tview.NewTextView()
+	response.SetTitle("Response")
+	response.SetBorder(true)
+	response.SetBackgroundColor(DARK_GREY)
+	page.response = response
+	return response
 }
 
 type HelpPage struct{}
