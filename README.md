@@ -1,10 +1,13 @@
 <div style="text-align: center;">
   <image src="./docs/images/welcome.png" />
+  <div style="display: flex;">
+    <image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" />
+  </div>
 </div>
 
 # Hypersomnia
 
-It may seem absurd, but Hypersomnia is better than Insomnia.
+Hypersomnia is a simple TUI application for testing your REST APIs.
 
 ## Keybindings
 
