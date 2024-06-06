@@ -10,7 +10,7 @@ It may seem absurd, but Hypersomnia is better than Insomnia.
 
 ### Global keybindings
 
-| Keybinding     | Page     |
+| Shortcut       | Page     |
 | -------------- | -------- |
 | <kbd>C-w</kbd> | Welcome  |
 | <kbd>C-e</kbd> | Endpoint |
@@ -18,12 +18,11 @@ It may seem absurd, but Hypersomnia is better than Insomnia.
 
 ### Endpoints
 
-| Keybinding         | Action       |
+| Shortcut           | Action       |
 | ------------------ | ------------ |
 | <kbd>C-Space</kbd> | Send request |
 
-> [!NOTE]
-> `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
+> [!NOTE] > `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
 
 ## License
 
