@@ -144,7 +144,6 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 }
 
 func (page *EndpointsPage) buildRequestSection() tview.Primitive {
-	methodDropdown := tview.NewDropDown()
 	methods := []string{
 		"GET",
 		"POST",
@@ -157,51 +156,24 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 		"TRACE",
 	}
 	defaultOption := 0 // GET
-	methodDropdown.SetOptions(
-		methods,
-		// TODO: selected callback
-		nil,
-	)
-	methodDropdown.SetCurrentOption(defaultOption)
-	methodDropdown.SetFieldBackgroundColor(DARK_GREY)
-	methodDropdown.SetBorder(true)
-	methodDropdown.SetBackgroundColor(DARK_GREY)
+	methodDropdown := HyperDropdown(methods, defaultOption, nil)
 	page.methods = methodDropdown
 
-	urlInput := tview.NewInputField()
-	urlInput.SetBorder(true)
-	urlInput.SetFieldBackgroundColor(DARK_GREY)
-	urlInput.SetBackgroundColor(DARK_GREY)
-	urlInput.SetPlaceholder("https://google.com/")
-	urlInput.SetPlaceholderStyle(tcell.StyleDefault.Background(DARK_GREY))
-	urlInput.SetPlaceholderTextColor(tcell.ColorGrey)
-	// TODO: set paste handler callback to only accept links (if necessary)
+	// TODO: set paste handler callback (validator) to only accept links (if necessary)
+	urlInput := HyperInputField("https://google.com/")
 	page.url = urlInput
-
 	urlForm := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		AddItem(methodDropdown, 0, 1, false).
 		AddItem(urlInput, 0, 5, false)
 
-	requestBodyArea := tview.NewTextArea()
-	requestBodyArea.SetBorder(true)
-	requestBodyArea.SetTitle("Body")
-	requestBodyArea.SetBackgroundColor(DARK_GREY)
-	requestBodyArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	requestBodyArea := HyperTextArea("Body")
 	page.body = requestBodyArea
 
-	queryParametersArea := tview.NewTextArea()
-	queryParametersArea.SetBorder(true)
-	queryParametersArea.SetTitle("Query parameters")
-	queryParametersArea.SetBackgroundColor(DARK_GREY)
-	queryParametersArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	queryParametersArea := HyperTextArea("Query parameters")
 	page.query = queryParametersArea
 
-	headersArea := tview.NewTextArea()
-	headersArea.SetBorder(true)
-	headersArea.SetTitle("Headers")
-	headersArea.SetBackgroundColor(DARK_GREY)
-	headersArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	headersArea := HyperTextArea("Headers")
 	page.headers = headersArea
 
 	requestForm := tview.NewFlex().
@@ -210,7 +182,6 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 		AddItem(requestBodyArea, 0, 7, false).
 		AddItem(queryParametersArea, 0, 2, false).
 		AddItem(headersArea, 0, 2, false)
-
 	requestForm.SetBorder(true)
 	requestForm.SetBackgroundColor(DARK_GREY)
 	requestForm.SetTitle("Request")
