@@ -88,6 +88,7 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 				panic(err)
 			}
 
+			// TODO: deal with other kind of responses, not only JSON
 			respBytes, err := io.ReadAll(resp.Body)
 			// TODO(errors)
 			if err != nil {
@@ -102,7 +103,6 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 
 			page.response.SetText(formattedJsonBuffer.String())
 			// TODO: deal with body, headers and query parameters
-			// TODO: deal with more than one kind of response, not only JSON
 		}
 		return event
 	})
