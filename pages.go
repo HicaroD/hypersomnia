@@ -73,8 +73,8 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			_, selectedMethod := page.methods.GetCurrentOption()
 			url := page.url.GetText()
 			// body := page.body.GetText()
-			// query := page.query.GetText()
 			// headers := page.headers.GetText()
+			// query := page.query.GetText()
 
 			request, err := http.NewRequest(selectedMethod, url, nil)
 			// TODO(errors)
@@ -101,7 +101,7 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			}
 
 			page.response.SetText(formattedJsonBuffer.String())
-			// TODO: deal with headers and query parameters
+			// TODO: deal with body, headers and query parameters
 			// TODO: deal with more than one kind of response, not only JSON
 		}
 		return event
@@ -193,8 +193,8 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	requestForm := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(urlForm, 0, 1, false).
-		AddItem(requestBodyArea, 0, 7, false).
 		AddItem(queryParametersArea, 0, 2, false).
+		AddItem(requestBodyArea, 0, 7, false).
 		AddItem(headersArea, 0, 2, false)
 	requestForm.SetBorder(true)
 	requestForm.SetBackgroundColor(DARK_GREY)
