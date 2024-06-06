@@ -8,7 +8,7 @@ It may seem absurd, but Hypersomnia is better than Insomnia.
 
 ## Keybindings
 
-## Global keybindings
+### Global keybindings
 
 | Keybinding     | Page     |
 | -------------- | -------- |
@@ -16,7 +16,7 @@ It may seem absurd, but Hypersomnia is better than Insomnia.
 | <kbd>C-e</kbd> | Endpoint |
 | <kbd>C-h</kbd> | Help     |
 
-## Endpoints
+### Endpoints
 
 | Keybinding         | Action       |
 | ------------------ | ------------ |
