@@ -32,4 +32,6 @@
        |___/|_|                                                
 
 
+Your favorite tool for testing APIs
+
 Press ^-h for help
