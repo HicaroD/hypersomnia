@@ -47,7 +47,7 @@ type EndpointsPage struct {
 
 func (page *EndpointsPage) Setup() {
 	page.client = &http.Client{
-		// Let the user decide the timeout
+		// TODO: let the user decide the timeout
 		Timeout: 30 * time.Second,
 	}
 }
@@ -63,29 +63,43 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlSpace:
+			// TODO: be careful with unnecessary memory usage
+			//       If the user start spamming Ctrl+Space, it will keep allocating
+			//       strings in memory because of the method "GetText"
+			//       Make sure to guarantee I'm only calling this method when
+			//       necessary by keeping tracking of the state of each input in
+			//       order to verify if any of these inputs has changed since the
+			//       last time Ctrl+A was pressed
 			_, selectedMethod := page.methods.GetCurrentOption()
 			url := page.url.GetText()
 			// body := page.body.GetText()
 			// query := page.query.GetText()
 			// headers := page.headers.GetText()
+
 			request, err := http.NewRequest(selectedMethod, url, nil)
+			// TODO(errors)
 			if err != nil {
 				panic(err)
 			}
 
 			resp, err := page.client.Do(request)
+			// TODO(errors)
 			if err != nil {
 				panic(err)
 			}
 
 			respBytes, err := io.ReadAll(resp.Body)
+			// TODO(errors)
 			if err != nil {
 				panic(err)
 			}
+
 			formattedJsonBuffer := &bytes.Buffer{}
+			// TODO(errors)
 			if err := json.Indent(formattedJsonBuffer, respBytes, "", "  "); err != nil {
 				panic(err)
 			}
+
 			page.response.SetText(formattedJsonBuffer.String())
 			// TODO: deal with headers and query parameters
 			// TODO: deal with more than one kind of response, not only JSON
