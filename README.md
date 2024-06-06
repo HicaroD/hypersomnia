@@ -1,6 +1,6 @@
 <div style="text-align: center;">
   <image src="./docs/images/welcome.png" />
-  <div style="display: flex;">
+  <div style="display: flex; align-items: center;">
     <image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" />
   </div>
 </div>
