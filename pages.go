@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
+	"encoding/json"
 	"io"
 	"time"
 
@@ -34,6 +36,8 @@ func (page *WelcomePage) Build() (string, tview.Primitive) {
 }
 
 type EndpointsPage struct {
+	client *http.Client
+
 	// Widgets
 	methods              *tview.DropDown
 	url                  *tview.InputField
@@ -41,7 +45,16 @@ type EndpointsPage struct {
 	response             *tview.TextView
 }
 
+func (page *EndpointsPage) Setup() {
+	page.client = &http.Client{
+		// Let the user decide the timeout
+		Timeout: 30 * time.Second,
+	}
+}
+
 func (page *EndpointsPage) Build() (string, tview.Primitive) {
+	page.Setup()
+
 	main := tview.NewFlex()
 	main.SetBorder(true)
 	main.SetDirection(tview.FlexColumn)
@@ -56,16 +69,13 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			// body := page.body.GetText()
 			// query := page.query.GetText()
 			// headers := page.headers.GetText()
-			// TODO: send HTTP request
+
 			request, err := http.NewRequest(selectedMethod, url, nil)
 			if err != nil {
 				panic(err)
 			}
 
-			client := http.Client{
-				Timeout: 30 * time.Second,
-			}
-			resp, err := client.Do(request)
+			resp, err := page.client.Do(request)
 			if err != nil {
 				panic(err)
 			}
@@ -74,8 +84,12 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			if err != nil {
 				panic(err)
 			}
-			respStr := string(respBytes[:])
-			page.response.SetText(respStr)
+			formattedJsonBuffer := &bytes.Buffer{}
+			if err := json.Indent(formattedJsonBuffer, respBytes, "", "  "); err != nil {
+				panic(err)
+			}
+			page.response.SetText(formattedJsonBuffer.String())
+
 			// TODO: deal with headers and query parameters
 		}
 		return event
