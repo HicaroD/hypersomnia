@@ -111,7 +111,8 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 
 			formattedJsonBuffer := &bytes.Buffer{}
 			// TODO(errors)
-			if err := json.Indent(formattedJsonBuffer, respBytes, "", "  "); err != nil {
+			err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
+			if err != nil {
 				panic(err)
 			}
 
