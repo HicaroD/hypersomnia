@@ -48,7 +48,8 @@ type EndpointsPage struct {
 
 func (page *EndpointsPage) Setup() {
 	page.client = &http.Client{
-		// TODO: let the user decide the timeout
+		// TODO: 30 seconds by default, but user should be able to decide the
+		// timeout
 		Timeout: 30 * time.Second,
 	}
 }
