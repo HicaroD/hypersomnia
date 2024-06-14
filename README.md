@@ -11,11 +11,12 @@
 
 ### Global keybindings
 
-| Shortcut       | Page     |
-| -------------- | -------- |
-| <kbd>C-w</kbd> | Welcome  |
-| <kbd>C-e</kbd> | Endpoint |
-| <kbd>C-h</kbd> | Help     |
+| Shortcut       | Action              |
+| -------------- | ------------------- |
+| <kbd>C-w</kbd> | Go to welcome page  |
+| <kbd>C-e</kbd> | Go to endpoint page |
+| <kbd>C-h</kbd> | Go to help page     |
+| <kbd>C-c</kbd> | Close application   |
 
 ### Endpoints
 
@@ -23,8 +24,7 @@
 | ------------------ | ------------ |
 | <kbd>C-Space</kbd> | Send request |
 
-> [!NOTE]
-> `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
+> [!NOTE] > `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
 
 ## License
 
