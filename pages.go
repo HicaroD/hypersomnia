@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"io"
+	"strings"
 	"time"
 
 	"net/http"
@@ -72,11 +73,23 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			//       last time Ctrl+A was pressed
 			_, selectedMethod := page.methods.GetCurrentOption()
 			url := page.url.GetText()
-			// body := page.body.GetText()
-			// headers := page.headers.GetText()
-			// query := page.query.GetText()
+			body := page.body.GetText()
+			headers := page.headers.GetText()
+			query := page.query.GetText()
 
-			request, err := http.NewRequest(selectedMethod, url, nil)
+			request, err := http.NewRequest(selectedMethod, url, strings.NewReader(body))
+			// TODO(errors)
+			if err != nil {
+				panic(err)
+			}
+
+			err = addQueryParams(request, query)
+			// TODO(errors)
+			if err != nil {
+				panic(err)
+			}
+
+			err = addHeaders(request, headers)
 			// TODO(errors)
 			if err != nil {
 				panic(err)
