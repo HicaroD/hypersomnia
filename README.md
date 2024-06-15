@@ -24,7 +24,9 @@
 | ------------------ | ------------ |
 | <kbd>C-Space</kbd> | Send request |
 
-> [!NOTE] > `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
+<!-- prettier-ignore -->
+> [!NOTE]
+> `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
 
 ## License
 
