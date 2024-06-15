@@ -26,7 +26,8 @@
 
 <!-- prettier-ignore -->
 > [!NOTE]
-> `C` is Control (CTRL) on Windows and Linux and Command on MacOS.
+> `C` is Control (<kbd>Ctrl</kbd>) for Windows and Linux. On MacOS, it is Cmd
+> (⌘)
 
 ## License
 
