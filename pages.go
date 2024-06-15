@@ -238,3 +238,24 @@ func (page *HelpPage) Build() (string, tview.Primitive) {
 	help.SetBackgroundColor(WELCOME_DARK_BACKGROUND)
 	return "help", help
 }
+
+type Popup struct{}
+
+// TODO: set the title and text when something happens
+// TODO: when popup has focus and ESC is presed, close popup
+func (page *Popup) Build() (string, tview.Primitive) {
+	content := tview.NewTextView()
+	content.SetTitle("Error")
+	content.SetText("Some error occured!")
+	content.SetBorder(true)
+	content.SetBackgroundColor(DARK_GREY)
+
+	popup := tview.NewFlex().
+		AddItem(nil, 0, 1, false).
+		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+			AddItem(nil, 0, 1, false).
+			AddItem(content, 10, 1, true).
+			AddItem(nil, 0, 1, false), 40, 1, true).
+		AddItem(nil, 0, 1, false)
+	return "popup", popup
+}

@@ -12,6 +12,7 @@ type HyperPageIndex int
 const (
 	WELCOME HyperPageIndex = iota
 	ENDPOINTS
+	POPUP
 	HELP
 )
 
@@ -19,6 +20,8 @@ var KEY_TO_PAGE map[tcell.Key]HyperPageIndex = map[tcell.Key]HyperPageIndex{
 	tcell.KeyCtrlW: WELCOME,
 	tcell.KeyCtrlE: ENDPOINTS,
 	tcell.KeyCtrlH: HELP,
+	// for testing popup
+	tcell.KeyCtrlA: POPUP,
 }
 
 type HyperNavigator struct {
@@ -37,6 +40,7 @@ func NewNavigator(pages *tview.Pages) *HyperNavigator {
 	hyperPages.mapper[WELCOME] = &WelcomePage{}
 	hyperPages.mapper[ENDPOINTS] = &EndpointsPage{}
 	hyperPages.mapper[HELP] = &HelpPage{}
+	hyperPages.mapper[POPUP] = &Popup{}
 
 	return &hyperPages
 }
@@ -52,6 +56,10 @@ func (navigator *HyperNavigator) GetPage(index HyperPageIndex) HyperPage {
 func (navigator *HyperNavigator) Navigate(index HyperPageIndex) {
 	page := navigator.GetPage(index)
 	name, pageWidget := page.Build()
-	navigator.pages = navigator.pages.AddAndSwitchToPage(name, pageWidget, true)
+	if index == POPUP {
+		navigator.pages = navigator.pages.AddPage(name, pageWidget, true, true)
+	} else {
+		navigator.pages = navigator.pages.AddAndSwitchToPage(name, pageWidget, true)
+	}
 	navigator.currentPage = index
 }
