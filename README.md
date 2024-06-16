@@ -1,7 +1,7 @@
 <!-- prettier-ignore -->
 > [!WARNING]
 > _Hypersomnia is heavily under development and not ready to use at its full
-> capacity. Feel free to contribute :heart:!_
+> capacity. Feel free to contribute :heart:_
 
 <div style="text-align: center;">
   <image src="./docs/images/welcome.png" />
