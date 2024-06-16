@@ -43,3 +43,43 @@ func HyperDropdown(
 	dropdown.SetBackgroundColor(DARK_GREY)
 	return dropdown
 }
+
+type PopupKind int
+
+const (
+	ERROR PopupKind = iota
+	WARNING
+)
+
+func HyperPopup(kind PopupKind, text string) *tview.Flex {
+	var title string
+	var borderColor tcell.Color
+
+	switch kind {
+	case ERROR:
+		title = "Error"
+		borderColor = POPUP_RED
+	case WARNING:
+		title = "Warning"
+		borderColor = POPUP_YELLOW
+	}
+
+	content := tview.NewTextView()
+	content.SetTitle(title)
+	content.SetText(text)
+	content.SetBorder(true)
+	content.SetBorderColor(borderColor)
+	content.SetBackgroundColor(DARK_GREY)
+
+	// escInfo := tview.NewTextView().SetTitle("Press ESC to close")
+
+	popup := tview.NewFlex().
+		AddItem(nil, 0, 1, false).
+		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+			AddItem(nil, 0, 1, false).
+			AddItem(content, 10, 1, true).
+			AddItem(nil, 0, 1, false), 40, 1, true).
+		AddItem(nil, 0, 1, false)
+
+	return popup
+}
