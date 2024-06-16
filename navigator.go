@@ -60,6 +60,7 @@ func (navigator *HyperNavigator) Navigate(index HyperPageIndex) {
 	navigator.currentPage = index
 }
 
+// TODO: Hypersomnia should keep track of the state for all pages
 func (navigator *HyperNavigator) Pop() {
 	if navigator.previousPage == -1 {
 		return
