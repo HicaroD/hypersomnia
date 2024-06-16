@@ -35,9 +35,6 @@ func (hyper *Hyper) InputHandler(event *tcell.EventKey) *tcell.EventKey {
 		if hyper.navigator.currentPage == POPUP {
 			hyper.navigator.Pop()
 		}
-	case tcell.KeyCtrlA:
-		popup := HyperPopup(WARNING, "SOMETHING BAD HAPPENED")
-		hyper.navigator.ShowPopup(popup)
 	}
 
 	return event
