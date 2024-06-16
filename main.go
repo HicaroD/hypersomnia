@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -45,7 +47,7 @@ func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(hyper.InputHandler)
 	hyper.navigator.Navigate(WELCOME)
 	if err := hyper.app.Run(); err != nil {
-		panic(err)
+		log.Fatalf("Unable to execute application due to the following error:\n%s", err)
 	}
 }
 

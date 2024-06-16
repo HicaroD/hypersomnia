@@ -37,6 +37,8 @@ func (page *WelcomePage) Build() (string, tview.Primitive) {
 }
 
 type EndpointsPage struct {
+	navigator *HyperNavigator
+
 	client *http.Client
 
 	// Widgets
@@ -79,41 +81,46 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			query := page.query.GetText()
 
 			request, err := http.NewRequest(selectedMethod, url, strings.NewReader(body))
-			// TODO(errors)
 			if err != nil {
-				panic(err)
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to build request"))
+				break
 			}
 
 			err = addQueryParams(request, query)
 			// TODO(errors)
 			if err != nil {
-				panic(err)
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for query parameters"))
+				break
 			}
 
 			err = addHeaders(request, headers)
 			// TODO(errors)
 			if err != nil {
-				panic(err)
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for headers"))
+				break
 			}
 
 			resp, err := page.client.Do(request)
 			// TODO(errors)
 			if err != nil {
-				panic(err)
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to make HTTP request"))
+				break
 			}
 
 			// TODO: deal with other kind of responses, not only JSON
 			respBytes, err := io.ReadAll(resp.Body)
 			// TODO(errors)
 			if err != nil {
-				panic(err)
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to read body HTTP request"))
+				break
 			}
 
 			formattedJsonBuffer := &bytes.Buffer{}
 			// TODO(errors)
 			err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
 			if err != nil {
-				panic(err)
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to format JSON from response body"))
+				break
 			}
 
 			page.response.SetText(formattedJsonBuffer.String())

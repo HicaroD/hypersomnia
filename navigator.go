@@ -30,18 +30,18 @@ type HyperNavigator struct {
 }
 
 func NewNavigator(pages *tview.Pages) *HyperNavigator {
-	hyperPages := HyperNavigator{
+	navigator := HyperNavigator{
 		pages:        pages,
 		mapper:       map[HyperPageIndex]HyperPage{},
 		currentPage:  -1,
 		previousPage: -1,
 	}
 
-	hyperPages.mapper[WELCOME] = &WelcomePage{}
-	hyperPages.mapper[ENDPOINTS] = &EndpointsPage{}
-	hyperPages.mapper[HELP] = &HelpPage{}
+	navigator.mapper[WELCOME] = &WelcomePage{}
+	navigator.mapper[ENDPOINTS] = &EndpointsPage{navigator: &navigator}
+	navigator.mapper[HELP] = &HelpPage{}
 
-	return &hyperPages
+	return &navigator
 }
 
 func (navigator *HyperNavigator) GetPage(index HyperPageIndex) HyperPage {
@@ -60,17 +60,15 @@ func (navigator *HyperNavigator) Navigate(index HyperPageIndex) {
 	navigator.currentPage = index
 }
 
-func (navigator *HyperNavigator) ShowPopup(popup *tview.Flex) {
-	navigator.pages = navigator.pages.AddPage("popup", popup, true, true)
-	navigator.previousPage = navigator.currentPage
-	navigator.currentPage = POPUP
-}
-
-// TODO: if necessary, implement a queue for keeping track of
-// pages
 func (navigator *HyperNavigator) Pop() {
 	if navigator.previousPage == -1 {
 		return
 	}
 	navigator.Navigate(navigator.previousPage)
+}
+
+func (navigator *HyperNavigator) ShowPopup(popup *tview.Flex) {
+	navigator.pages = navigator.pages.AddPage("popup", popup, true, true)
+	navigator.previousPage = navigator.currentPage
+	navigator.currentPage = POPUP
 }
