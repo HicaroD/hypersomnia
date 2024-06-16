@@ -1,3 +1,7 @@
+> [!WARNING]
+> Hypersomnia is heavily under development and not ready to use at its full
+> capacity. Feel free to contribute :heart:!
+
 <div style="text-align: center;">
   <image src="./docs/images/welcome.png" />
   <image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" />
