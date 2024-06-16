@@ -242,7 +242,10 @@ func (page *HelpPage) Build() (string, tview.Primitive) {
 type Popup struct{}
 
 // TODO: set the title and text when something happens
-// TODO: when popup has focus and ESC is presed, close popup
+// TODO: set style depending on the kind of message (error, notification and
+// etctera)
+// TODO: when popup has focus and ESC is presed, close popup (use currentPage
+// attribute from navigator)
 func (page *Popup) Build() (string, tview.Primitive) {
 	content := tview.NewTextView()
 	content.SetTitle("Error")
@@ -257,5 +260,6 @@ func (page *Popup) Build() (string, tview.Primitive) {
 			AddItem(content, 10, 1, true).
 			AddItem(nil, 0, 1, false), 40, 1, true).
 		AddItem(nil, 0, 1, false)
+
 	return "popup", popup
 }

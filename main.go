@@ -28,6 +28,13 @@ func (hyper *Hyper) Run() {
 		if ok {
 			hyper.navigator.Navigate(pageIndex)
 		}
+
+		switch pressedKey {
+		case tcell.KeyESC:
+			if hyper.navigator.currentPage == POPUP {
+				hyper.navigator.Pop()
+			}
+		}
 		return event
 	})
 

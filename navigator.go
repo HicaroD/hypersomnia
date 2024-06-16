@@ -25,16 +25,18 @@ var KEY_TO_PAGE map[tcell.Key]HyperPageIndex = map[tcell.Key]HyperPageIndex{
 }
 
 type HyperNavigator struct {
-	pages       *tview.Pages
-	mapper      map[HyperPageIndex]HyperPage
-	currentPage HyperPageIndex
+	pages        *tview.Pages
+	mapper       map[HyperPageIndex]HyperPage
+	currentPage  HyperPageIndex
+	previousPage HyperPageIndex
 }
 
 func NewNavigator(pages *tview.Pages) *HyperNavigator {
 	hyperPages := HyperNavigator{
-		pages:       pages,
-		mapper:      map[HyperPageIndex]HyperPage{},
-		currentPage: -1,
+		pages:        pages,
+		mapper:       map[HyperPageIndex]HyperPage{},
+		currentPage:  -1,
+		previousPage: -1,
 	}
 
 	hyperPages.mapper[WELCOME] = &WelcomePage{}
@@ -61,5 +63,15 @@ func (navigator *HyperNavigator) Navigate(index HyperPageIndex) {
 	} else {
 		navigator.pages = navigator.pages.AddAndSwitchToPage(name, pageWidget, true)
 	}
+	navigator.previousPage = navigator.currentPage
 	navigator.currentPage = index
+}
+
+// TODO: if necessary, implement a queue for keeping track of
+// pages
+func (navigator *HyperNavigator) Pop() {
+	if navigator.previousPage == -1 {
+		return
+	}
+	navigator.Navigate(navigator.previousPage)
 }
