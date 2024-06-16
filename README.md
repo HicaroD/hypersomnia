@@ -19,7 +19,7 @@ of the box.
 
 ## Keybindings
 
-### Global keybindings
+### Global
 
 | Shortcut       | Action              |
 | -------------- | ------------------- |
