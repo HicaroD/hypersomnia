@@ -17,10 +17,6 @@ just like you do with [Insomnia](https://insomnia.rest/) or
 [Postman](https://www.postman.com/), but it runs on your terminal and works out
 of the box.
 
-Of course, Hypersomnia will probably never reach the same number of features as
-Insomnia and Postman, however it was never the goal, the idea is to offer a
-free, fast and simple product for testing your endpoints.
-
 ## Keybindings
 
 ### Global keybindings
