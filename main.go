@@ -68,7 +68,7 @@ func buildLogFile() (*os.File, error) {
 }
 
 func main() {
-	// TODO: log file could be on ".config" folder
+	// TODO: create log file in the configuration folder
 	logFile, err := buildLogFile()
 	if err != nil {
 		log.Fatalf("unable to build log file: %s\n", err)
