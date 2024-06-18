@@ -22,19 +22,26 @@ var KEY_TO_PAGE map[tcell.Key]HyperPageIndex = map[tcell.Key]HyperPageIndex{
 	tcell.KeyCtrlH: HELP,
 }
 
+var PAGE_NAMES map[HyperPageIndex]string = map[HyperPageIndex]string{
+	WELCOME:   "welcome",
+	ENDPOINTS: "endpoints",
+	POPUP:     "popup",
+	HELP:      "help",
+}
+
 type HyperNavigator struct {
-	pages            *tview.Pages
-	mapper           map[HyperPageIndex]HyperPage
-	currentPage      HyperPageIndex
-	previousPage     HyperPageIndex
+	pages        *tview.Pages
+	mapper       map[HyperPageIndex]HyperPage
+	currentPage  HyperPageIndex
+	previousPage HyperPageIndex
 }
 
 func NewNavigator(pages *tview.Pages) *HyperNavigator {
 	navigator := HyperNavigator{
-		pages:            pages,
-		mapper:           map[HyperPageIndex]HyperPage{},
-		currentPage:      -1,
-		previousPage:     -1,
+		pages:        pages,
+		mapper:       map[HyperPageIndex]HyperPage{},
+		currentPage:  -1,
+		previousPage: -1,
 	}
 
 	navigator.mapper[WELCOME] = &WelcomePage{}
@@ -60,12 +67,8 @@ func (navigator *HyperNavigator) Navigate(index HyperPageIndex) {
 	navigator.currentPage = index
 }
 
-// TODO: Hypersomnia should keep track of the state for all pages
 func (navigator *HyperNavigator) Pop() {
-	if navigator.previousPage == -1 {
-		return
-	}
-	navigator.Navigate(navigator.previousPage)
+	navigator.pages.RemovePage(PAGE_NAMES[navigator.currentPage])
 }
 
 func (navigator *HyperNavigator) ShowPopup(popup *tview.Flex) {

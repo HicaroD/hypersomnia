@@ -35,7 +35,7 @@ func (page *WelcomePage) Build() (string, tview.Primitive) {
 	welcome.SetTextColor(tcell.ColorDodgerBlue)
 	welcome.SetTextAlign(tview.AlignCenter)
 	welcome.SetBackgroundColor(WELCOME_DARK_BACKGROUND)
-	return "welcome", welcome
+	return PAGE_NAMES[WELCOME], welcome
 }
 
 type EndpointsPage struct {
@@ -157,7 +157,7 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 		false,
 	)
 
-	return "collections", main
+	return PAGE_NAMES[ENDPOINTS], main
 }
 
 func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
@@ -247,5 +247,5 @@ func (page *HelpPage) Build() (string, tview.Primitive) {
 	help.SetTextColor(tcell.ColorDodgerBlue)
 	help.SetTextAlign(tview.AlignCenter)
 	help.SetBackgroundColor(WELCOME_DARK_BACKGROUND)
-	return "help", help
+	return PAGE_NAMES[HELP], help
 }
