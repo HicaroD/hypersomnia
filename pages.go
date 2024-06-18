@@ -4,11 +4,13 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 	"time"
 
 	"net/http"
+	"net/url"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -75,12 +77,12 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			//       order to verify if any of these inputs has changed since the
 			//       last time Ctrl+A was pressed
 			_, selectedMethod := page.methods.GetCurrentOption()
-			url := page.url.GetText()
+			endpointUrl := page.url.GetText()
 			body := page.body.GetText()
 			headers := page.headers.GetText()
 			query := page.query.GetText()
 
-			request, err := http.NewRequest(selectedMethod, url, strings.NewReader(body))
+			request, err := http.NewRequest(selectedMethod, endpointUrl, strings.NewReader(body))
 			if err != nil {
 				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to build request"))
 				break
@@ -103,7 +105,9 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			resp, err := page.client.Do(request)
 			// TODO(errors)
 			if err != nil {
-				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to make HTTP request"))
+				requestErr := err.(*url.Error)
+				errorMessage := fmt.Sprintf("Unable to do HTTP request due to %s\n", requestErr.Err)
+				page.navigator.ShowPopup(HyperPopup(ERROR, errorMessage))
 				break
 			}
 
