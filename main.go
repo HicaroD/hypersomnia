@@ -69,6 +69,8 @@ func buildLogFile() (*os.File, error) {
 
 func main() {
 	// TODO: create log file in the configuration folder
+	// TODO: passing this file around is boring, is there a way to make it
+	// global, so I can log anything at any place
 	logFile, err := buildLogFile()
 	if err != nil {
 		log.Fatalf("unable to build log file: %s\n", err)
@@ -80,6 +82,7 @@ func main() {
 		}
 	}()
 
+	// TODO: create database in the configuration folder
 	db, err := NewHyperDB("endpoints.sqlite", logFile)
 	if err != nil {
 		log.Fatalf("unable to open SQLite3 database: %s\n", err)

@@ -91,21 +91,18 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			}
 
 			err = addQueryParams(request, query)
-			// TODO(errors)
 			if err != nil {
 				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for query parameters"))
 				break
 			}
 
 			err = addHeaders(request, headers)
-			// TODO(errors)
 			if err != nil {
 				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for headers"))
 				break
 			}
 
 			resp, err := page.client.Do(request)
-			// TODO(errors)
 			if err != nil {
 				requestErr := err.(*url.Error)
 				errorMessage := fmt.Sprintf("Unable to do HTTP request due to %s\n", requestErr.Err)
@@ -115,14 +112,12 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 
 			// TODO: deal with other kind of responses, not only JSON
 			respBytes, err := io.ReadAll(resp.Body)
-			// TODO(errors)
 			if err != nil {
 				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to read body HTTP request"))
 				break
 			}
 
 			formattedJsonBuffer := &bytes.Buffer{}
-			// TODO(errors)
 			err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
 			if err != nil {
 				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to format JSON from response body"))
@@ -130,7 +125,6 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			}
 
 			page.response.SetText(formattedJsonBuffer.String())
-			// TODO: deal with body, headers and query parameters
 		}
 		return event
 	})
