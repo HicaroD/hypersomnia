@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"strings"
 	"time"
 
@@ -40,6 +41,7 @@ func (page *WelcomePage) Build() (string, tview.Primitive) {
 
 type EndpointsPage struct {
 	navigator *HyperNavigator
+	db        *HyperDB
 
 	client *http.Client
 
@@ -169,8 +171,15 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	list.SetBackgroundColor(DARK_GREY)
 	list.SetMainTextStyle(tcell.StyleDefault.Background(DARK_GREY))
 	list.SetShortcutStyle(tcell.StyleDefault.Background(DARK_GREY))
-	list.AddItem("First endpoint", "", '0', nil)
-	list.AddItem("Second endpoint", "", '1', nil)
+
+	storedEndpoints, err := page.db.ListEndpoints()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i, endpointItem := range storedEndpoints {
+		list.AddItem(endpointItem.Url, "", rune(i), nil)
+	}
 
 	endpoints.AddItem(
 		list,

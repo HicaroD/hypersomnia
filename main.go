@@ -16,7 +16,7 @@ type Hyper struct {
 	navigator *HyperNavigator
 }
 
-func NewHyper(logFile *os.File) *Hyper {
+func NewHyper(db *HyperDB, logFile *os.File) *Hyper {
 	app := tview.NewApplication()
 	app.EnablePaste(true)
 	app.EnableMouse(true)
@@ -24,7 +24,7 @@ func NewHyper(logFile *os.File) *Hyper {
 	pages := tview.NewPages()
 	app.SetRoot(pages, true)
 
-	return &Hyper{app: app, navigator: NewNavigator(pages), logFile: logFile}
+	return &Hyper{logFile: logFile, app: app, navigator: NewNavigator(pages, db)}
 }
 
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
@@ -73,6 +73,24 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to build log file: %s\n", err)
 	}
-	app := NewHyper(logFile)
+	defer func() {
+		err := logFile.Close()
+		if err != nil {
+			log.Fatalf("unable to close log file: %s\n", err)
+		}
+	}()
+
+	db, err := NewHyperDB("endpoints.sqlite", logFile)
+	if err != nil {
+		log.Fatalf("unable to open SQLite3 database: %s\n", err)
+	}
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Fatalf("unable to close SQLite3 database: %s\n", err)
+		}
+	}()
+
+	app := NewHyper(db, logFile)
 	app.Run()
 }

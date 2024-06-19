@@ -36,7 +36,7 @@ type HyperNavigator struct {
 	previousPage HyperPageIndex
 }
 
-func NewNavigator(pages *tview.Pages) *HyperNavigator {
+func NewNavigator(pages *tview.Pages, db *HyperDB) *HyperNavigator {
 	navigator := HyperNavigator{
 		pages:        pages,
 		mapper:       map[HyperPageIndex]HyperPage{},
@@ -45,7 +45,7 @@ func NewNavigator(pages *tview.Pages) *HyperNavigator {
 	}
 
 	navigator.mapper[WELCOME] = &WelcomePage{}
-	navigator.mapper[ENDPOINTS] = &EndpointsPage{navigator: &navigator}
+	navigator.mapper[ENDPOINTS] = &EndpointsPage{navigator: &navigator, db: db}
 	navigator.mapper[HELP] = &HelpPage{}
 
 	return &navigator
