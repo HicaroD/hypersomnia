@@ -173,7 +173,7 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 
 	for _, endpointItem := range storedEndpoints {
 		// TODO: remove shortcut rune
-		list.AddItem(endpointItem.Url, "", ' ', nil)
+		list.AddItem(endpointItem.Url, "", 0, nil)
 	}
 
 	endpoints.AddItem(
