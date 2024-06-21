@@ -29,6 +29,6 @@ type Endpoint struct {
 	StatusCode       int
 }
 
-func (e *Endpoint) FormatAsItem() string {
+func (e *Endpoint) String() string {
 	return fmt.Sprintf("[%s]%s[white] %s", METHOD_COLOR[e.Method], e.Method, e.Url)
 }

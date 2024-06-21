@@ -172,7 +172,7 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	}
 
 	for _, endpointItem := range storedEndpoints {
-		list.AddItem(endpointItem.FormatAsItem(), "", 0, nil)
+		list.AddItem(endpointItem.String(), "", 0, nil)
 	}
 
 	endpoints.AddItem(
