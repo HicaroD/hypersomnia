@@ -164,7 +164,7 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	list := tview.NewList()
 	list.SetBackgroundColor(DARK_GREY)
 	list.SetMainTextStyle(tcell.StyleDefault.Background(DARK_GREY))
-	list.SetSelectedStyle(tcell.StyleDefault.Background(DARK_GREY).Underline(true))
+	list.SetSelectedStyle(tcell.StyleDefault.Background(DARK_GREY).Bold(true))
 
 	storedEndpoints, err := page.db.ListEndpoints()
 	if err != nil {
