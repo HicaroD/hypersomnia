@@ -164,7 +164,7 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	list := tview.NewList()
 	list.SetBackgroundColor(DARK_GREY)
 	list.SetMainTextStyle(tcell.StyleDefault.Background(DARK_GREY))
-	list.SetShortcutStyle(tcell.StyleDefault.Background(DARK_GREY))
+	list.SetSelectedStyle(tcell.StyleDefault.Background(DARK_GREY).Underline(true))
 
 	storedEndpoints, err := page.db.ListEndpoints()
 	if err != nil {
@@ -172,8 +172,7 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	}
 
 	for _, endpointItem := range storedEndpoints {
-		// TODO: remove shortcut rune
-		list.AddItem(endpointItem.Url, "", 0, nil)
+		list.AddItem(endpointItem.FormatAsItem(), "", 0, nil)
 	}
 
 	endpoints.AddItem(
