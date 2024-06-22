@@ -33,17 +33,6 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	if ok {
 		hyper.navigator.Navigate(pageIndex)
 	}
-
-	switch pressedKey {
-	case tcell.KeyESC:
-		// TODO: close popup when it loses focus (with mouse interaction),
-		// which means I should close the popup when it is clicked outside
-		// of the popup
-		if hyper.navigator.currentPage == POPUP {
-			hyper.navigator.Pop()
-		}
-	}
-
 	return event
 }
 

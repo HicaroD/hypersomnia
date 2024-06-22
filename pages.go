@@ -86,19 +86,19 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 
 			request, err := http.NewRequest(selectedMethod, endpointUrl, strings.NewReader(body))
 			if err != nil {
-				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to build request"))
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to build request", page.navigator))
 				break
 			}
 
 			err = addQueryParams(request, query)
 			if err != nil {
-				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for query parameters"))
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for query parameters", page.navigator))
 				break
 			}
 
 			err = addHeaders(request, headers)
 			if err != nil {
-				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for headers"))
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Invalid format for headers", page.navigator))
 				break
 			}
 
@@ -106,21 +106,21 @@ func (page *EndpointsPage) Build() (string, tview.Primitive) {
 			if err != nil {
 				requestErr := err.(*url.Error)
 				errorMessage := fmt.Sprintf("Unable to do HTTP request due to %s\n", requestErr.Err)
-				page.navigator.ShowPopup(HyperPopup(ERROR, errorMessage))
+				page.navigator.ShowPopup(HyperPopup(ERROR, errorMessage, page.navigator))
 				break
 			}
 
 			// TODO: deal with other kind of responses, not only JSON
 			respBytes, err := io.ReadAll(resp.Body)
 			if err != nil {
-				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to read body HTTP request"))
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to read body HTTP request", page.navigator))
 				break
 			}
 
 			formattedJsonBuffer := &bytes.Buffer{}
 			err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
 			if err != nil {
-				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to format JSON from response body"))
+				page.navigator.ShowPopup(HyperPopup(ERROR, "Unable to format JSON from response body", page.navigator))
 				break
 			}
 

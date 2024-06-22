@@ -51,7 +51,10 @@ const (
 	WARNING
 )
 
-func HyperPopup(kind PopupKind, text string) *tview.Flex {
+// TODO: Don't pass navigator every time
+// TODO: Don't make a new popup every time, make one and
+// change the attributes every time you need a "new one"
+func HyperPopup(kind PopupKind, text string, navigator *HyperNavigator) *tview.Flex {
 	var title string
 	var borderColor tcell.Color
 
@@ -71,8 +74,6 @@ func HyperPopup(kind PopupKind, text string) *tview.Flex {
 	content.SetBorderColor(borderColor)
 	content.SetBackgroundColor(DARK_GREY)
 
-	// escInfo := tview.NewTextView().SetTitle("Press ESC to close")
-
 	popup := tview.NewFlex().
 		AddItem(nil, 0, 1, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
@@ -80,6 +81,15 @@ func HyperPopup(kind PopupKind, text string) *tview.Flex {
 			AddItem(content, 10, 1, true).
 			AddItem(nil, 0, 1, false), 40, 1, true).
 		AddItem(nil, 0, 1, false)
+
+	popup.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		pressedKey := event.Key()
+		switch pressedKey {
+		case tcell.KeyESC:
+			navigator.Pop()
+		}
+		return event
+	})
 
 	return popup
 }
