@@ -1,33 +1,34 @@
-package main
+package widgets
 
 import (
+	"github.com/HicaroD/hypersomnia/utils"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-func HyperInputField(placeholder string) *tview.InputField {
+func InputField(placeholder string) *tview.InputField {
 	input := tview.NewInputField()
 	input.SetBorder(true)
-	input.SetFieldBackgroundColor(DARK_GREY)
-	input.SetBackgroundColor(DARK_GREY)
+	input.SetFieldBackgroundColor(utils.COLOR_DARK_GREY)
+	input.SetBackgroundColor(utils.COLOR_DARK_GREY)
 	input.SetPlaceholder(placeholder)
-	input.SetPlaceholderStyle(tcell.StyleDefault.Background(DARK_GREY))
+	input.SetPlaceholderStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY))
 	input.SetPlaceholderTextColor(tcell.ColorGrey)
 	// TODO: set paste handler callback for validating input (for example, only
 	// allow links to be pasted)
 	return input
 }
 
-func HyperTextArea(title string) *tview.TextArea {
+func TextArea(title string) *tview.TextArea {
 	textArea := tview.NewTextArea()
 	textArea.SetBorder(true)
 	textArea.SetTitle(title)
-	textArea.SetBackgroundColor(DARK_GREY)
-	textArea.SetTextStyle(tcell.StyleDefault.Background(DARK_GREY))
+	textArea.SetBackgroundColor(utils.COLOR_DARK_GREY)
+	textArea.SetTextStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY))
 	return textArea
 }
 
-func HyperDropdown(
+func Dropdown(
 	options []string,
 	defaultOption int,
 	selected func(text string, index int),
@@ -38,33 +39,32 @@ func HyperDropdown(
 		selected,
 	)
 	dropdown.SetCurrentOption(defaultOption)
-	dropdown.SetFieldBackgroundColor(DARK_GREY)
+	dropdown.SetFieldBackgroundColor(utils.COLOR_DARK_GREY)
 	dropdown.SetBorder(true)
-	dropdown.SetBackgroundColor(DARK_GREY)
+	dropdown.SetBackgroundColor(utils.COLOR_DARK_GREY)
 	return dropdown
 }
 
 type PopupKind int
 
 const (
-	ERROR PopupKind = iota
-	WARNING
+	POPUP_ERROR PopupKind = iota
+	POPUP_WARNING
 )
 
-// TODO: Don't pass navigator every time
 // TODO: Don't make a new popup every time, make one and
 // change the attributes every time you need a "new one"
-func HyperPopup(kind PopupKind, text string, navigator *HyperNavigator) *tview.Flex {
+func Popup(kind PopupKind, text string, onEsc func()) *tview.Flex {
 	var title string
 	var borderColor tcell.Color
 
 	switch kind {
-	case ERROR:
+	case POPUP_ERROR:
 		title = "Error"
-		borderColor = POPUP_RED
-	case WARNING:
+		borderColor = utils.COLOR_POPUP_RED
+	case POPUP_WARNING:
 		title = "Warning"
-		borderColor = POPUP_YELLOW
+		borderColor = utils.COLOR_POPUP_YELLOW
 	}
 
 	content := tview.NewTextView()
@@ -72,7 +72,7 @@ func HyperPopup(kind PopupKind, text string, navigator *HyperNavigator) *tview.F
 	content.SetText(text)
 	content.SetBorder(true)
 	content.SetBorderColor(borderColor)
-	content.SetBackgroundColor(DARK_GREY)
+	content.SetBackgroundColor(utils.COLOR_DARK_GREY)
 
 	popup := tview.NewFlex().
 		AddItem(nil, 0, 1, false).
@@ -86,7 +86,7 @@ func HyperPopup(kind PopupKind, text string, navigator *HyperNavigator) *tview.F
 		pressedKey := event.Key()
 		switch pressedKey {
 		case tcell.KeyESC:
-			navigator.Pop()
+			onEsc()
 		}
 		return event
 	})

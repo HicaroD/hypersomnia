@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func addHeaders(request *http.Request, headers string) error {
+func AddHeaders(request *http.Request, headers string) error {
 	headers = strings.TrimSpace(headers)
 	if headers == "" {
 		return nil
@@ -21,7 +21,7 @@ func addHeaders(request *http.Request, headers string) error {
 	return nil
 }
 
-func addQueryParams(request *http.Request, queryParams string) error {
+func AddQueryParams(request *http.Request, queryParams string) error {
 	queryParams = strings.TrimSpace(queryParams)
 	if queryParams == "" {
 		return nil

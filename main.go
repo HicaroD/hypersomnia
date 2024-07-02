@@ -6,6 +6,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/HicaroD/hypersomnia/navigator"
+	"github.com/HicaroD/hypersomnia/pages"
+	db "github.com/HicaroD/hypersomnia/database"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -13,10 +17,10 @@ import (
 type Hyper struct {
 	logFile   *os.File
 	app       *tview.Application
-	navigator *HyperNavigator
+	navigator *navigator.Navigator
 }
 
-func NewHyper(db *HyperDB, logFile *os.File) *Hyper {
+func NewHyper(db *db.Database, logFile *os.File) *Hyper {
 	app := tview.NewApplication()
 	app.EnablePaste(true)
 	app.EnableMouse(true)
@@ -24,12 +28,12 @@ func NewHyper(db *HyperDB, logFile *os.File) *Hyper {
 	pages := tview.NewPages()
 	app.SetRoot(pages, true)
 
-	return &Hyper{logFile: logFile, app: app, navigator: NewNavigator(pages, db)}
+	return &Hyper{logFile: logFile, app: app, navigator: navigator.New(pages, db)}
 }
 
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
-	pageIndex, ok := KEY_TO_PAGE[pressedKey]
+	pageIndex, ok := navigator.KEY_TO_PAGE[pressedKey]
 	if ok {
 		hyper.navigator.Navigate(pageIndex)
 	}
@@ -38,7 +42,7 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 
 func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(hyper.InputCapture)
-	hyper.navigator.Navigate(WELCOME)
+	hyper.navigator.Navigate(pages.WELCOME)
 	if err := hyper.app.Run(); err != nil {
 		log.Fatalf("Unable to execute application due to the following error:\n%s", err)
 	}
@@ -72,7 +76,7 @@ func main() {
 	}()
 
 	// TODO: create database in the configuration folder
-	db, err := NewHyperDB("endpoints.sqlite", logFile)
+	db, err := db.New("endpoints.sqlite", logFile)
 	if err != nil {
 		log.Fatalf("unable to open SQLite3 database: %s\n", err)
 	}

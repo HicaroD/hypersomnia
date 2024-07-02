@@ -1,9 +1,10 @@
-package main
+package database
 
 import (
 	"database/sql"
 	"fmt"
 	"os"
+	models "github.com/HicaroD/hypersomnia/models"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -25,12 +26,12 @@ CREATE TABLE IF NOT EXISTS endpoint (
 )
 `
 
-type HyperDB struct {
+type Database struct {
 	logFile *os.File
 	conn    *sql.DB
 }
 
-func NewHyperDB(dbPath string, logFile *os.File) (*HyperDB, error) {
+func New(dbPath string, logFile *os.File) (*Database, error) {
 	conn, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open SQLite3 database: %s\n", err)
@@ -38,17 +39,17 @@ func NewHyperDB(dbPath string, logFile *os.File) (*HyperDB, error) {
 	if _, err := conn.Exec(SCHEMA); err != nil {
 		return nil, err
 	}
-	return &HyperDB{conn: conn, logFile: logFile}, nil
+	return &Database{conn: conn, logFile: logFile}, nil
 }
 
-func (db *HyperDB) ListEndpoints() ([]*Endpoint, error) {
+func (db *Database) ListEndpoints() ([]*models.Endpoint, error) {
 	rows, err := db.conn.Query("SELECT * FROM endpoint")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var endpoints []*Endpoint
+	var endpoints []*models.Endpoint
 
 	for rows.Next() {
 		endpoint, err := db.getEndpointFromQueryRow(rows)
@@ -61,8 +62,8 @@ func (db *HyperDB) ListEndpoints() ([]*Endpoint, error) {
 	return endpoints, nil
 }
 
-func (db *HyperDB) getEndpointFromQueryRow(rows *sql.Rows) (*Endpoint, error) {
-	var endpoint Endpoint
+func (db *Database) getEndpointFromQueryRow(rows *sql.Rows) (*models.Endpoint, error) {
+	var endpoint models.Endpoint
 	if err := rows.Scan(&endpoint.Id, &endpoint.Method, &endpoint.Url,
 		&endpoint.QueryParams, &endpoint.Headers, &endpoint.RequestBodyType,
 		&endpoint.RequestBody, &endpoint.ResponseBodyType, &endpoint.ResponseBody,
@@ -72,6 +73,6 @@ func (db *HyperDB) getEndpointFromQueryRow(rows *sql.Rows) (*Endpoint, error) {
 	return &endpoint, nil
 }
 
-func (db *HyperDB) Close() error {
+func (db *Database) Close() error {
 	return db.conn.Close()
 }
