@@ -10,7 +10,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-type OnRequestCallback func(method, url, body, queryParams, headers string) (*hyperHttp.Response, error)
+type OnRequestCallback func(hyperHttp.Request) (*hyperHttp.Response, error)
 
 type EndpointsPage struct {
 	Main tview.Primitive
@@ -45,7 +45,14 @@ func (page *EndpointsPage) Setup() {
 			headers := page.headers.GetText()
 			query := page.query.GetText()
 
-			response, err := page.onRequest(selectedMethod, endpointUrl, body, query, headers)
+			request := hyperHttp.Request{
+				Method: selectedMethod,
+				Url: endpointUrl,
+				Body: body,
+				QueryParams: query,
+				Headers: headers,
+			}
+			response, err := page.onRequest(request)
 			if err != nil {
 				// TODO: show popup
 				panic(err)

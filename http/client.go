@@ -17,23 +17,24 @@ func New(client *http.Client) *HttpClient {
 	return &HttpClient{client}
 }
 
-func (c *HttpClient) DoRequest(method, url, body, queryParams, headers string) (*Response, error) {
-	request, err := http.NewRequest(method, url, strings.NewReader(body))
+// TODO: build request struct to decrease the number of parameters here
+func (c *HttpClient) DoRequest(request Request) (*Response, error) {
+	req, err := http.NewRequest(request.Method, request.Url, strings.NewReader(request.Body))
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.addQueryParams(request, queryParams)
+	err = c.addQueryParams(req, request.QueryParams)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.addHeaders(request, headers)
+	err = c.addHeaders(req, request.Headers)
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := c.client.Do(request)
+	response, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
