@@ -51,13 +51,16 @@ func (c *HttpClient) addHeaders(request *http.Request, headers string) error {
 	if headers == "" {
 		return nil
 	}
+
+	newHeaders := request.Header
 	for _, line := range strings.Split(headers, "\n") {
 		header := strings.Split(line, "=")
 		if len(header) != 2 {
 			return fmt.Errorf("invalid format for header - size %d", len(header))
 		}
-		request.Header.Set(header[0], header[1])
+		newHeaders.Add(header[0], header[1])
 	}
+	request.Header = newHeaders
 	return nil
 }
 
@@ -72,8 +75,9 @@ func (c *HttpClient) addQueryParams(request *http.Request, queryParams string) e
 		if len(queryParam) != 2 {
 			return fmt.Errorf("invalid format for query params - size %d", len(queryParam))
 		}
-		urlQuery.Set(queryParam[0], queryParam[1])
+		urlQuery.Add(queryParam[0], queryParam[1])
 	}
+	request.URL.RawQuery = urlQuery.Encode()
 	return nil
 }
 
