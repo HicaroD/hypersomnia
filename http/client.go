@@ -51,7 +51,6 @@ func (c *HttpClient) addHeaders(request *http.Request, headers string) error {
 	if headers == "" {
 		return nil
 	}
-
 	newHeaders := request.Header
 	for _, line := range strings.Split(headers, "\n") {
 		header := strings.Split(line, "=")
