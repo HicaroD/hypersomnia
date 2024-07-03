@@ -1,7 +1,6 @@
 package navigator
 
 import (
-	db "github.com/HicaroD/hypersomnia/database"
 	"github.com/HicaroD/hypersomnia/pages"
 
 	"github.com/gdamore/tcell/v2"
@@ -17,15 +16,15 @@ var KEY_TO_PAGE map[tcell.Key]pages.Index = map[tcell.Key]pages.Index{
 type Navigator struct {
 	pages *tview.Pages
 
-	pageManager  *pages.PageManager
+	pageManager  *pages.Manager
 	currentPage  pages.Index
 	previousPage pages.Index
 }
 
-func New(p *tview.Pages, database *db.Database) *Navigator {
+func New(p *tview.Pages, pm *pages.Manager) *Navigator {
 	navigator := Navigator{
 		pages:        p,
-		pageManager:  pages.New(database),
+		pageManager:  pm,
 		currentPage:  -1,
 		previousPage: -1,
 	}

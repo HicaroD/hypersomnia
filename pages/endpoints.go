@@ -1,18 +1,12 @@
 package pages
 
 import (
-	// "bytes"
-	// "encoding/json"
-	// "fmt"
-	// "io"
-	"log"
-	// "strings"
-	"time"
-
+	"bytes"
+	"encoding/json"
+	"io"
 	"net/http"
-	// "net/url"
 
-	db "github.com/HicaroD/hypersomnia/database"
+	"github.com/HicaroD/hypersomnia/models"
 	utils "github.com/HicaroD/hypersomnia/utils"
 	widgets "github.com/HicaroD/hypersomnia/widgets"
 
@@ -20,24 +14,20 @@ import (
 	"github.com/rivo/tview"
 )
 
-type EndpointsPage struct {
-	db *db.Database
-	client *http.Client
+type OnRequestCallback func(method, url, body, queryParams, headers string) (*http.Response, error)
 
+type EndpointsPage struct {
 	Main                 tview.Primitive
+
 	methods              *tview.DropDown
 	url                  *tview.InputField
 	body, query, headers *tview.TextArea
 	response             *tview.TextView
+
+	onRequest OnRequestCallback
 }
 
 func (page *EndpointsPage) Setup() {
-	page.client = &http.Client{
-		// TODO: 30 seconds by default, but user should be able to decide the
-		// timeout
-		Timeout: 30 * time.Second,
-	}
-
 	main := tview.NewFlex()
 	main.SetBorder(true)
 	main.SetDirection(tview.FlexColumn)
@@ -54,32 +44,60 @@ func (page *EndpointsPage) Setup() {
 			//       order to verify if any of these inputs has changed since the
 			//       last time Ctrl+A was pressed
 
-			// _, selectedMethod := page.methods.GetCurrentOption()
-			// endpointUrl := page.url.GetText()
-			// body := page.body.GetText()
-			// headers := page.headers.GetText()
-			// query := page.query.GetText()
+			_, selectedMethod := page.methods.GetCurrentOption()
+			endpointUrl := page.url.GetText()
+			body := page.body.GetText()
+			headers := page.headers.GetText()
+			query := page.query.GetText()
+
+			response, err := page.onRequest(selectedMethod, endpointUrl, body, query, headers)
+			if err != nil {
+				panic(err)
+			}
+
+			// TODO: this conversion should not be here
+			// Anyway response should be an string so we can
+			// use it in the text view
+
+			// TODO: deal with other kind of responses, not only JSON
+			respBytes, err := io.ReadAll(response.Body)
+			if err != nil {
+				// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to read body HTTP request", page.navigator))
+				// break
+				panic(err)
+			}
+
+			formattedJsonBuffer := &bytes.Buffer{}
+			err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
+			if err != nil {
+				// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to format JSON from response body", page.navigator))
+				// break
+				panic(err)
+			}
+
+			page.response.SetText(formattedJsonBuffer.String())
 
 			// TODO: could it be separated to a new method, such as a "lambda" that receives
 			// as parameter all the data necessary for making the request and return a response
+
 			// request, err := http.NewRequest(selectedMethod, endpointUrl, strings.NewReader(body))
 			// if err != nil {
 			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to build request", page.navigator))
 			// 	break
 			// }
-			//
+
 			// err = hyper.AddQueryParams(request, query)
 			// if err != nil {
 			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Invalid format for query parameters", page.navigator))
 			// 	break
 			// }
-			//
+
 			// err = hyper.AddHeaders(request, headers)
 			// if err != nil {
 			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Invalid format for headers", page.navigator))
 			// 	break
 			// }
-			//
+
 			// resp, err := page.client.Do(request)
 			// if err != nil {
 			// 	requestErr := err.(*url.Error)
@@ -87,14 +105,14 @@ func (page *EndpointsPage) Setup() {
 			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, errorMessage, page.navigator))
 			// 	break
 			// }
-			//
+
 			// // TODO: deal with other kind of responses, not only JSON
 			// respBytes, err := io.ReadAll(resp.Body)
 			// if err != nil {
 			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to read body HTTP request", page.navigator))
 			// 	break
 			// }
-			//
+
 			// formattedJsonBuffer := &bytes.Buffer{}
 			// err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
 			// if err != nil {
@@ -144,10 +162,13 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	list.SetMainTextStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY))
 	list.SetSelectedStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY).Bold(true))
 
-	storedEndpoints, err := page.db.ListEndpoints()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// TODO: implement callback for getting list of endpoints
+
+	// storedEndpoints, err := page.db.ListEndpoints()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	storedEndpoints := make([]*models.Endpoint, 0)
 
 	for _, endpointItem := range storedEndpoints {
 		list.AddItem(endpointItem.String(), "", 0, nil)

@@ -3,8 +3,8 @@ package pages
 import (
 	"fmt"
 
+	http "github.com/HicaroD/hypersomnia/http"
 	"github.com/rivo/tview"
-	db "github.com/HicaroD/hypersomnia/database"
 )
 
 type Page interface {
@@ -42,31 +42,33 @@ var NAMES map[Index]string = map[Index]string{
 	HELP:      "help",
 }
 
-type PageManager struct {
-	Welcome *WelcomePage
+type Manager struct {
+	Welcome   *WelcomePage
 	Endpoints *EndpointsPage
-	Help *HelpPage
+	Help      *HelpPage
 }
 
-func New(database *db.Database) *PageManager {
+func New(client *http.HttpClient) *Manager {
 	// NOTE: should I initialize everything all at once?
 	welcome := &WelcomePage{}
 	welcome.Setup()
 
-	endpoints := &EndpointsPage{db: database}
+	endpoints := &EndpointsPage{
+		onRequest: client.DoRequest,
+	}
 	endpoints.Setup()
 
 	help := &HelpPage{}
 	help.Setup()
 
-	return &PageManager{
-		Welcome: welcome,
+	return &Manager{
+		Welcome:   welcome,
 		Endpoints: endpoints,
-		Help: help,
+		Help:      help,
 	}
 }
 
-func (pm *PageManager) GetPage(index Index) (string, tview.Primitive, error) {
+func (pm *Manager) GetPage(index Index) (string, tview.Primitive, error) {
 	var page Page
 	switch index {
 	case WELCOME:

@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
+	db "github.com/HicaroD/hypersomnia/database"
+	hyperHttp "github.com/HicaroD/hypersomnia/http"
 	"github.com/HicaroD/hypersomnia/navigator"
 	"github.com/HicaroD/hypersomnia/pages"
-	db "github.com/HicaroD/hypersomnia/database"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -20,7 +22,7 @@ type Hyper struct {
 	navigator *navigator.Navigator
 }
 
-func NewHyper(db *db.Database, logFile *os.File) *Hyper {
+func NewHyper(pm *pages.Manager, logFile *os.File) *Hyper {
 	app := tview.NewApplication()
 	app.EnablePaste(true)
 	app.EnableMouse(true)
@@ -28,23 +30,29 @@ func NewHyper(db *db.Database, logFile *os.File) *Hyper {
 	pages := tview.NewPages()
 	app.SetRoot(pages, true)
 
-	return &Hyper{logFile: logFile, app: app, navigator: navigator.New(pages, db)}
+	return &Hyper{logFile: logFile, app: app, navigator: navigator.New(pages, pm)}
 }
 
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
 	pageIndex, ok := navigator.KEY_TO_PAGE[pressedKey]
 	if ok {
-		hyper.navigator.Navigate(pageIndex)
+		err := hyper.navigator.Navigate(pageIndex)
+		if err != nil {
+			log.Fatalf("unable to navigate to page with index %s due to the following error: %s", pageIndex, err)
+		}
 	}
 	return event
 }
 
 func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(hyper.InputCapture)
-	hyper.navigator.Navigate(pages.WELCOME)
+	err := hyper.navigator.Navigate(pages.WELCOME)
+	if err != nil {
+		log.Fatalf("unable to navigate to welcome page due to the following error:\n%s", err)
+	}
 	if err := hyper.app.Run(); err != nil {
-		log.Fatalf("Unable to execute application due to the following error:\n%s", err)
+		log.Fatalf("unable to execute application due to the following error:\n%s", err)
 	}
 }
 
@@ -60,10 +68,21 @@ func buildLogFile() (*os.File, error) {
 	return logFile, nil
 }
 
+func buildPageManager() *pages.Manager {
+	client := hyperHttp.New(
+		&http.Client{
+			// TODO: 30 seconds by default, but user should be able to decide the
+			// timeout
+			Timeout: 30 * time.Second,
+		},
+	)
+	return pages.New(client)
+}
+
 func main() {
 	// TODO: create log file in the configuration folder
 	// TODO: passing this file around is boring, is there a way to make it
-	// global, so I can log anything at any place
+	// global, so I can log anything anywhere I want?
 	logFile, err := buildLogFile()
 	if err != nil {
 		log.Fatalf("unable to build log file: %s\n", err)
@@ -87,6 +106,7 @@ func main() {
 		}
 	}()
 
-	app := NewHyper(db, logFile)
+	pm := buildPageManager()
+	app := NewHyper(pm, logFile)
 	app.Run()
 }
