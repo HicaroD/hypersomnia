@@ -40,7 +40,7 @@ func (c *HttpClient) DoRequest(request Request) (*Response, error) {
 
 	responseAsStr, err := c.responseToString(response)
 	if err != nil {
-	  return nil, err
+		return nil, err
 	}
 
 	return &Response{responseAsStr}, nil
@@ -81,16 +81,12 @@ func (c *HttpClient) addQueryParams(request *http.Request, queryParams string) e
 func (c *HttpClient) responseToString(response *http.Response) (string, error) {
 	respBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to read body HTTP request", page.navigator))
-		// break
 		return "", err
 	}
 
 	formattedJsonBuffer := &bytes.Buffer{}
 	err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
 	if err != nil {
-		// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to format JSON from response body", page.navigator))
-		// break
 		return "", err
 	}
 
