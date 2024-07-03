@@ -1,11 +1,7 @@
 package pages
 
 import (
-	"bytes"
-	"encoding/json"
-	"io"
-	"net/http"
-
+	hyperHttp "github.com/HicaroD/hypersomnia/http"
 	"github.com/HicaroD/hypersomnia/models"
 	utils "github.com/HicaroD/hypersomnia/utils"
 	widgets "github.com/HicaroD/hypersomnia/widgets"
@@ -14,10 +10,10 @@ import (
 	"github.com/rivo/tview"
 )
 
-type OnRequestCallback func(method, url, body, queryParams, headers string) (*http.Response, error)
+type OnRequestCallback func(method, url, body, queryParams, headers string) (*hyperHttp.Response, error)
 
 type EndpointsPage struct {
-	Main                 tview.Primitive
+	Main tview.Primitive
 
 	methods              *tview.DropDown
 	url                  *tview.InputField
@@ -43,7 +39,6 @@ func (page *EndpointsPage) Setup() {
 			//       necessary by keeping tracking of the state of each input in
 			//       order to verify if any of these inputs has changed since the
 			//       last time Ctrl+A was pressed
-
 			_, selectedMethod := page.methods.GetCurrentOption()
 			endpointUrl := page.url.GetText()
 			body := page.body.GetText()
@@ -52,75 +47,11 @@ func (page *EndpointsPage) Setup() {
 
 			response, err := page.onRequest(selectedMethod, endpointUrl, body, query, headers)
 			if err != nil {
+				// TODO: show popup
 				panic(err)
 			}
 
-			// TODO: this conversion should not be here
-			// Anyway response should be an string so we can
-			// use it in the text view
-
-			// TODO: deal with other kind of responses, not only JSON
-			respBytes, err := io.ReadAll(response.Body)
-			if err != nil {
-				// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to read body HTTP request", page.navigator))
-				// break
-				panic(err)
-			}
-
-			formattedJsonBuffer := &bytes.Buffer{}
-			err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
-			if err != nil {
-				// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to format JSON from response body", page.navigator))
-				// break
-				panic(err)
-			}
-
-			page.response.SetText(formattedJsonBuffer.String())
-
-			// TODO: could it be separated to a new method, such as a "lambda" that receives
-			// as parameter all the data necessary for making the request and return a response
-
-			// request, err := http.NewRequest(selectedMethod, endpointUrl, strings.NewReader(body))
-			// if err != nil {
-			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to build request", page.navigator))
-			// 	break
-			// }
-
-			// err = hyper.AddQueryParams(request, query)
-			// if err != nil {
-			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Invalid format for query parameters", page.navigator))
-			// 	break
-			// }
-
-			// err = hyper.AddHeaders(request, headers)
-			// if err != nil {
-			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Invalid format for headers", page.navigator))
-			// 	break
-			// }
-
-			// resp, err := page.client.Do(request)
-			// if err != nil {
-			// 	requestErr := err.(*url.Error)
-			// 	errorMessage := fmt.Sprintf("Unable to do HTTP request due to %s\n", requestErr.Err)
-			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, errorMessage, page.navigator))
-			// 	break
-			// }
-
-			// // TODO: deal with other kind of responses, not only JSON
-			// respBytes, err := io.ReadAll(resp.Body)
-			// if err != nil {
-			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to read body HTTP request", page.navigator))
-			// 	break
-			// }
-
-			// formattedJsonBuffer := &bytes.Buffer{}
-			// err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
-			// if err != nil {
-			// 	page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to format JSON from response body", page.navigator))
-			// 	break
-			// }
-
-			// page.response.SetText(formattedJsonBuffer.String())
+			page.response.SetText(response.Body)
 		}
 		return event
 	})
