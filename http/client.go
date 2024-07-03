@@ -1,7 +1,10 @@
 package http
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -14,7 +17,7 @@ func New(client *http.Client) *HttpClient {
 	return &HttpClient{client}
 }
 
-func (c *HttpClient) DoRequest(method, url, body, queryParams, headers string) (*http.Response, error) {
+func (c *HttpClient) DoRequest(method, url, body, queryParams, headers string) (*Response, error) {
 	request, err := http.NewRequest(method, url, strings.NewReader(body))
 	if err != nil {
 		return nil, err
@@ -35,7 +38,12 @@ func (c *HttpClient) DoRequest(method, url, body, queryParams, headers string) (
 		return nil, err
 	}
 
-	return response, nil
+	responseAsStr, err := c.responseToString(response)
+	if err != nil {
+	  return nil, err
+	}
+
+	return &Response{responseAsStr}, nil
 }
 
 func (c *HttpClient) addHeaders(request *http.Request, headers string) error {
@@ -67,4 +75,24 @@ func (c *HttpClient) addQueryParams(request *http.Request, queryParams string) e
 		urlQuery.Set(queryParam[0], queryParam[1])
 	}
 	return nil
+}
+
+// TODO: deal with more types of response, not only JSON
+func (c *HttpClient) responseToString(response *http.Response) (string, error) {
+	respBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to read body HTTP request", page.navigator))
+		// break
+		return "", err
+	}
+
+	formattedJsonBuffer := &bytes.Buffer{}
+	err = json.Indent(formattedJsonBuffer, respBytes, "", "  ")
+	if err != nil {
+		// page.navigator.ShowPopup(widgets.Popup(widgets.POPUP_ERROR, "Unable to format JSON from response body", page.navigator))
+		// break
+		return "", err
+	}
+
+	return formattedJsonBuffer.String(), nil
 }
