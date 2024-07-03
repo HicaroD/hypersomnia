@@ -17,7 +17,6 @@ func New(client *http.Client) *HttpClient {
 	return &HttpClient{client}
 }
 
-// TODO: build request struct to decrease the number of parameters here
 func (c *HttpClient) DoRequest(request Request) (*Response, error) {
 	req, err := http.NewRequest(request.Method, request.Url, strings.NewReader(request.Body))
 	if err != nil {
