@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	db "github.com/HicaroD/hypersomnia/database"
-	http "github.com/HicaroD/hypersomnia/http"
+	hyperHttp "github.com/HicaroD/hypersomnia/http"
 	"github.com/rivo/tview"
 )
 
@@ -35,8 +35,9 @@ type Manager struct {
 	Help      *HelpPage
 }
 
-func New(client *http.HttpClient, database *db.Database) *Manager {
+func New(client *hyperHttp.HttpClient, database *db.Database) *Manager {
 	// NOTE: should I initialize everything all at once?
+
 	welcome := &WelcomePage{}
 	welcome.Setup()
 

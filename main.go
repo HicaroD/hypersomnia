@@ -36,11 +36,12 @@ func NewHyper(pm *pages.Manager, logFile *os.File) *Hyper {
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
 	pageIndex, ok := navigator.KEY_TO_PAGE[pressedKey]
-	if ok {
-		err := hyper.navigator.Navigate(pageIndex)
-		if err != nil {
-			log.Fatalf("unable to navigate to page with index %s due to the following error: %s", pageIndex, err)
-		}
+	if !ok {
+		return event
+	}
+	err := hyper.navigator.Navigate(pageIndex)
+	if err != nil {
+		log.Fatalf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
 	}
 	return event
 }
@@ -68,17 +69,6 @@ func buildLogFile() (*os.File, error) {
 	return logFile, nil
 }
 
-func buildPageManager(database *db.Database) *pages.Manager {
-	client := hyperHttp.New(
-		&http.Client{
-			// TODO: 30 seconds by default, but user should be able to decide the
-			// timeout
-			Timeout: 30 * time.Second,
-		},
-	)
-	return pages.New(client, database)
-}
-
 func main() {
 	// TODO: create log file in the configuration folder
 	// TODO: passing this file around is boring, is there a way to make it
@@ -95,18 +85,26 @@ func main() {
 	}()
 
 	// TODO: create database in the configuration folder
-	db, err := db.New("endpoints.sqlite", logFile)
+	database, err := db.New("endpoints.sqlite", logFile)
 	if err != nil {
 		log.Fatalf("unable to open SQLite3 database: %s\n", err)
 	}
 	defer func() {
-		err := db.Close()
+		err := database.Close()
 		if err != nil {
 			log.Fatalf("unable to close SQLite3 database: %s\n", err)
 		}
 	}()
 
-	pm := buildPageManager(db)
+	client := hyperHttp.New(
+		&http.Client{
+			// TODO: 30 seconds by default, but user should be able to decide the
+			// timeout
+			Timeout: 30 * time.Second,
+		},
+	)
+	pm := pages.New(client, database)
+
 	app := NewHyper(pm, logFile)
 	app.Run()
 }

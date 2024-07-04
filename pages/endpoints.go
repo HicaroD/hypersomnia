@@ -15,6 +15,7 @@ import (
 type (
 	OnRequestCallback       func(hyperHttp.Request) (*hyperHttp.Response, error)
 	OnListEndpointsCallback func() ([]*models.Endpoint, error)
+	ShowPopupCallback       func(kind widgets.PopupKind, text string)
 )
 
 type EndpointsPage struct {
@@ -29,6 +30,7 @@ type EndpointsPage struct {
 
 	onRequest       OnRequestCallback
 	onListEndpoints OnListEndpointsCallback
+	showPopup       ShowPopupCallback
 }
 
 func (page *EndpointsPage) Setup() {
@@ -68,10 +70,9 @@ func (page *EndpointsPage) Setup() {
 			}
 			response, err := page.onRequest(request)
 			if err != nil {
-				// TODO: show popup
-				panic(err)
+				page.showPopup(widgets.POPUP_ERROR, err.Error())
+				break
 			}
-
 			page.response.SetText(response.Body)
 		}
 		return event
@@ -149,9 +150,7 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 		AddItem(urlInput, 0, 5, false)
 
 	requestBodyArea := widgets.TextArea("Body")
-
 	queryParametersArea := widgets.TextArea("Query parameters")
-
 	headersArea := widgets.TextArea("Headers")
 
 	requestForm := tview.NewFlex().
