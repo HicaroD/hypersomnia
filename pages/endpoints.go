@@ -103,6 +103,8 @@ func (page *EndpointsPage) Setup() {
 	page.Main = main
 }
 
+func (page *EndpointsPage) Page() tview.Primitive { return page.Main }
+
 func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	endpoints := tview.NewFlex()
 	endpoints.SetTitle("Endpoints")
@@ -114,7 +116,7 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	list.SetBackgroundColor(utils.COLOR_DARK_GREY)
 	list.SetMainTextStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY))
 	list.SetSelectedStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY).Bold(true))
-	list.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
+	list.SetChangedFunc(func(index int, _ string, _ string, _ rune) {
 		if index > len(page.endpoints) {
 			return
 		}
@@ -135,35 +137,22 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	return endpoints
 }
 
-func (page *EndpointsPage) setCurrentEndpoint(endpoint *models.Endpoint) {
-	page.methods.SetCurrentOption(endpoint.MethodIndex())
-	page.url.SetText(endpoint.Url)
-	page.query.SetText(endpoint.RequestQueryParams, true)
-	page.body.SetText(endpoint.RequestBody, true)
-	page.headers.SetText(endpoint.RequestHeaders, true)
-}
-
 func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	defaultOption := 0 // GET
 	methodDropdown := widgets.Dropdown(models.ENDPOINT_METHODS, defaultOption, nil)
-	page.methods = methodDropdown
 
 	// TODO: set paste handler callback (validator) to only accept links (if necessary)
 	urlInput := widgets.InputField("https://google.com/")
-	page.url = urlInput
 	urlForm := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		AddItem(methodDropdown, 0, 1, false).
 		AddItem(urlInput, 0, 5, false)
 
 	requestBodyArea := widgets.TextArea("Body")
-	page.body = requestBodyArea
 
 	queryParametersArea := widgets.TextArea("Query parameters")
-	page.query = queryParametersArea
 
 	headersArea := widgets.TextArea("Headers")
-	page.headers = headersArea
 
 	requestForm := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -174,6 +163,12 @@ func (page *EndpointsPage) buildRequestSection() tview.Primitive {
 	requestForm.SetBorder(true)
 	requestForm.SetBackgroundColor(utils.COLOR_DARK_GREY)
 	requestForm.SetTitle("Request")
+
+	page.methods = methodDropdown
+	page.url = urlInput
+	page.body = requestBodyArea
+	page.query = queryParametersArea
+	page.headers = headersArea
 
 	return requestForm
 }
@@ -187,4 +182,10 @@ func (page *EndpointsPage) buildResponseSection() tview.Primitive {
 	return response
 }
 
-func (page *EndpointsPage) Page() tview.Primitive { return page.Main }
+func (page *EndpointsPage) setCurrentEndpoint(endpoint *models.Endpoint) {
+	page.methods.SetCurrentOption(endpoint.MethodIndex())
+	page.url.SetText(endpoint.Url)
+	page.query.SetText(endpoint.RequestQueryParams, true)
+	page.body.SetText(endpoint.RequestBody, true)
+	page.headers.SetText(endpoint.RequestHeaders, true)
+}
