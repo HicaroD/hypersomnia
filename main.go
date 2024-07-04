@@ -68,7 +68,7 @@ func buildLogFile() (*os.File, error) {
 	return logFile, nil
 }
 
-func buildPageManager() *pages.Manager {
+func buildPageManager(database *db.Database) *pages.Manager {
 	client := hyperHttp.New(
 		&http.Client{
 			// TODO: 30 seconds by default, but user should be able to decide the
@@ -76,7 +76,7 @@ func buildPageManager() *pages.Manager {
 			Timeout: 30 * time.Second,
 		},
 	)
-	return pages.New(client)
+	return pages.New(client, database)
 }
 
 func main() {
@@ -106,7 +106,7 @@ func main() {
 		}
 	}()
 
-	pm := buildPageManager()
+	pm := buildPageManager(db)
 	app := NewHyper(pm, logFile)
 	app.Run()
 }

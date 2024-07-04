@@ -65,7 +65,7 @@ func (db *Database) ListEndpoints() ([]*models.Endpoint, error) {
 func (db *Database) getEndpointFromQueryRow(rows *sql.Rows) (*models.Endpoint, error) {
 	var endpoint models.Endpoint
 	if err := rows.Scan(&endpoint.Id, &endpoint.Method, &endpoint.Url,
-		&endpoint.QueryParams, &endpoint.Headers, &endpoint.RequestBodyType,
+		&endpoint.RequestQueryParams, &endpoint.RequestHeaders, &endpoint.RequestBodyType,
 		&endpoint.RequestBody, &endpoint.ResponseBodyType, &endpoint.ResponseBody,
 		&endpoint.StatusCode); err != nil {
 		return nil, err

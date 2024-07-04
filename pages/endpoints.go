@@ -1,6 +1,8 @@
 package pages
 
 import (
+	"log"
+
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
 	"github.com/HicaroD/hypersomnia/models"
 	utils "github.com/HicaroD/hypersomnia/utils"
@@ -10,7 +12,10 @@ import (
 	"github.com/rivo/tview"
 )
 
-type OnRequestCallback func(hyperHttp.Request) (*hyperHttp.Response, error)
+type (
+	OnRequestCallback func(hyperHttp.Request) (*hyperHttp.Response, error)
+	OnListEndpoints   func() ([]*models.Endpoint, error)
+)
 
 type EndpointsPage struct {
 	Main tview.Primitive
@@ -20,10 +25,19 @@ type EndpointsPage struct {
 	body, query, headers *tview.TextArea
 	response             *tview.TextView
 
-	onRequest OnRequestCallback
+	endpoints []*models.Endpoint
+
+	onRequest       OnRequestCallback
+	onListEndpoints OnListEndpoints
 }
 
 func (page *EndpointsPage) Setup() {
+	endpoints, err := page.onListEndpoints()
+	if err != nil {
+		log.Fatal(err)
+	}
+	page.endpoints = endpoints
+
 	main := tview.NewFlex()
 	main.SetBorder(true)
 	main.SetDirection(tview.FlexColumn)
@@ -46,11 +60,11 @@ func (page *EndpointsPage) Setup() {
 			query := page.query.GetText()
 
 			request := hyperHttp.Request{
-				Method: selectedMethod,
-				Url: endpointUrl,
-				Body: body,
+				Method:      selectedMethod,
+				Url:         endpointUrl,
+				Body:        body,
 				QueryParams: query,
-				Headers: headers,
+				Headers:     headers,
 			}
 			response, err := page.onRequest(request)
 			if err != nil {
@@ -63,23 +77,22 @@ func (page *EndpointsPage) Setup() {
 		return event
 	})
 
+	requestSection := page.buildRequestSection()
 	endpointsSection := page.buildEndpointsSection()
+	responseSection := page.buildResponseSection()
+
 	main.AddItem(
 		endpointsSection,
 		0,
 		2,
 		false,
 	)
-
-	requestSection := page.buildRequestSection()
 	main.AddItem(
 		requestSection,
 		0,
 		4,
 		false,
 	)
-
-	responseSection := page.buildResponseSection()
 	main.AddItem(
 		responseSection,
 		0,
@@ -92,23 +105,24 @@ func (page *EndpointsPage) Setup() {
 
 func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	endpoints := tview.NewFlex()
+	endpoints.SetTitle("Endpoints")
 	endpoints.SetBorder(true)
+	endpoints.SetBackgroundColor(utils.COLOR_DARK_GREY)
 	endpoints.SetDirection(tview.FlexColumn)
 
 	list := tview.NewList()
 	list.SetBackgroundColor(utils.COLOR_DARK_GREY)
 	list.SetMainTextStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY))
 	list.SetSelectedStyle(tcell.StyleDefault.Background(utils.COLOR_DARK_GREY).Bold(true))
+	list.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
+		if index > len(page.endpoints) {
+			return
+		}
+		selectedEndpoint := page.endpoints[index]
+		page.setCurrentEndpoint(selectedEndpoint)
+	})
 
-	// TODO: implement callback for getting list of endpoints
-
-	// storedEndpoints, err := page.db.ListEndpoints()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	storedEndpoints := make([]*models.Endpoint, 0)
-
-	for _, endpointItem := range storedEndpoints {
+	for _, endpointItem := range page.endpoints {
 		list.AddItem(endpointItem.String(), "", 0, nil)
 	}
 
@@ -118,25 +132,20 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 		1,
 		false,
 	)
-	endpoints.SetBackgroundColor(utils.COLOR_DARK_GREY)
-	endpoints.SetTitle("Endpoints")
 	return endpoints
 }
 
+func (page *EndpointsPage) setCurrentEndpoint(endpoint *models.Endpoint) {
+	page.methods.SetCurrentOption(endpoint.MethodIndex())
+	page.url.SetText(endpoint.Url)
+	page.query.SetText(endpoint.RequestQueryParams, true)
+	page.body.SetText(endpoint.RequestBody, true)
+	page.headers.SetText(endpoint.RequestHeaders, true)
+}
+
 func (page *EndpointsPage) buildRequestSection() tview.Primitive {
-	methods := []string{
-		"GET",
-		"POST",
-		"PUT",
-		"DELETE",
-		"PATCH",
-		"HEAD",
-		"CONNECT",
-		"OPTIONS",
-		"TRACE",
-	}
 	defaultOption := 0 // GET
-	methodDropdown := widgets.Dropdown(methods, defaultOption, nil)
+	methodDropdown := widgets.Dropdown(models.ENDPOINT_METHODS, defaultOption, nil)
 	page.methods = methodDropdown
 
 	// TODO: set paste handler callback (validator) to only accept links (if necessary)

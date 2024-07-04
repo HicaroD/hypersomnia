@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	http "github.com/HicaroD/hypersomnia/http"
+	db "github.com/HicaroD/hypersomnia/database"
 	"github.com/rivo/tview"
 )
 
@@ -48,13 +49,14 @@ type Manager struct {
 	Help      *HelpPage
 }
 
-func New(client *http.HttpClient) *Manager {
+func New(client *http.HttpClient, database *db.Database) *Manager {
 	// NOTE: should I initialize everything all at once?
 	welcome := &WelcomePage{}
 	welcome.Setup()
 
 	endpoints := &EndpointsPage{
 		onRequest: client.DoRequest,
+		onListEndpoints: database.ListEndpoints,
 	}
 	endpoints.Setup()
 
