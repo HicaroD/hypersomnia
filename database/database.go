@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	models "github.com/HicaroD/hypersomnia/models"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )

@@ -2,15 +2,15 @@ package pages
 
 import (
 	_ "embed"
+	"github.com/HicaroD/hypersomnia/utils"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"github.com/HicaroD/hypersomnia/utils"
 )
 
 //go:embed help.txt
 var HELP_MESSAGE string
 
-type HelpPage struct{
+type HelpPage struct {
 	main *tview.TextView
 }
 
