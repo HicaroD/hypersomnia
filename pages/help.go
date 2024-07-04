@@ -11,7 +11,7 @@ import (
 var HELP_MESSAGE string
 
 type HelpPage struct{
-	Main *tview.TextView
+	main *tview.TextView
 }
 
 func (page *HelpPage) Setup() {
@@ -21,7 +21,7 @@ func (page *HelpPage) Setup() {
 	help.SetTextColor(tcell.ColorDodgerBlue)
 	help.SetTextAlign(tview.AlignCenter)
 	help.SetBackgroundColor(utils.COLOR_WELCOME_DARK_BACKGROUND)
-	page.Main = help
+	page.main = help
 }
 
-func (page *HelpPage) Page() tview.Primitive { return page.Main }
+func (page *HelpPage) Page() tview.Primitive { return page.main }

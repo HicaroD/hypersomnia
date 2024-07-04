@@ -13,12 +13,12 @@ import (
 )
 
 type (
-	OnRequestCallback func(hyperHttp.Request) (*hyperHttp.Response, error)
-	OnListEndpoints   func() ([]*models.Endpoint, error)
+	OnRequestCallback       func(hyperHttp.Request) (*hyperHttp.Response, error)
+	OnListEndpointsCallback func() ([]*models.Endpoint, error)
 )
 
 type EndpointsPage struct {
-	Main tview.Primitive
+	main tview.Primitive
 
 	methods              *tview.DropDown
 	url                  *tview.InputField
@@ -28,7 +28,7 @@ type EndpointsPage struct {
 	endpoints []*models.Endpoint
 
 	onRequest       OnRequestCallback
-	onListEndpoints OnListEndpoints
+	onListEndpoints OnListEndpointsCallback
 }
 
 func (page *EndpointsPage) Setup() {
@@ -100,10 +100,10 @@ func (page *EndpointsPage) Setup() {
 		false,
 	)
 
-	page.Main = main
+	page.main = main
 }
 
-func (page *EndpointsPage) Page() tview.Primitive { return page.Main }
+func (page *EndpointsPage) Page() tview.Primitive { return page.main }
 
 func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 	endpoints := tview.NewFlex()

@@ -12,7 +12,7 @@ import (
 var WELCOME_MESSAGE string
 
 type WelcomePage struct {
-	Main *tview.TextView
+	main *tview.TextView
 }
 
 func (page *WelcomePage) Setup() {
@@ -23,7 +23,7 @@ func (page *WelcomePage) Setup() {
 	welcomeText.SetTextAlign(tview.AlignCenter)
 	welcomeText.SetBackgroundColor(utils.COLOR_WELCOME_DARK_BACKGROUND)
 
-	page.Main = welcomeText
+	page.main = welcomeText
 }
 
-func (page *WelcomePage) Page() tview.Primitive { return page.Main }
+func (page *WelcomePage) Page() tview.Primitive { return page.main }

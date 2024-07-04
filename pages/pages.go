@@ -3,8 +3,8 @@ package pages
 import (
 	"fmt"
 
-	http "github.com/HicaroD/hypersomnia/http"
 	db "github.com/HicaroD/hypersomnia/database"
+	http "github.com/HicaroD/hypersomnia/http"
 	"github.com/rivo/tview"
 )
 
@@ -21,20 +21,6 @@ const (
 	POPUP
 	HELP
 )
-
-func (index Index) String() string {
-	switch index {
-	case WELCOME:
-		return "WELCOME"
-	case ENDPOINTS:
-		return "ENDPOINTS"
-	case POPUP:
-		return "POPUP"
-	case HELP:
-		return "HELP"
-	}
-	return "UNKNOWN"
-}
 
 var NAMES map[Index]string = map[Index]string{
 	WELCOME:   "welcome",
@@ -55,7 +41,7 @@ func New(client *http.HttpClient, database *db.Database) *Manager {
 	welcome.Setup()
 
 	endpoints := &EndpointsPage{
-		onRequest: client.DoRequest,
+		onRequest:       client.DoRequest,
 		onListEndpoints: database.ListEndpoints,
 	}
 	endpoints.Setup()
@@ -80,12 +66,12 @@ func (pm *Manager) GetPage(index Index) (string, tview.Primitive, error) {
 	case ENDPOINTS:
 		page = pm.Endpoints
 	default:
-		return "", nil, fmt.Errorf("unimplemented page: %s", index)
+		return "", nil, fmt.Errorf("unimplemented page: %s", NAMES[index])
 	}
 
 	name, ok := NAMES[index]
 	if !ok {
-		return "", nil, fmt.Errorf("page '%s' name not found", index)
+		return "", nil, fmt.Errorf("page '%s' name not found", NAMES[index])
 	}
 	return name, page.Page(), nil
 }
