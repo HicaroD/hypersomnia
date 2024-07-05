@@ -26,4 +26,5 @@ func (page *WelcomePage) Setup() {
 	page.main = welcomeText
 }
 
+func (page *WelcomePage) Index() Index          { return WELCOME }
 func (page *WelcomePage) Page() tview.Primitive { return page.main }

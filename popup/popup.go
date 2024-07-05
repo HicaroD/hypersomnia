@@ -1,4 +1,4 @@
-package widgets
+package popup
 
 import (
 	"github.com/HicaroD/hypersomnia/utils"
@@ -14,8 +14,10 @@ const (
 )
 
 type PopupManager struct {
-	main    *tview.Flex
-	content *tview.TextView
+	ShowPopupCallback func(tview.Primitive)
+
+	main      *tview.Flex
+	content   *tview.TextView
 }
 
 func (ppm *PopupManager) Setup() *tview.Flex {
@@ -55,4 +57,6 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 	ppm.content.SetTitle(title)
 	ppm.content.SetText(text)
 	ppm.content.SetBorderColor(borderColor)
+
+	ppm.ShowPopupCallback(ppm.main)
 }

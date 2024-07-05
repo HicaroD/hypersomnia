@@ -2,7 +2,6 @@ package navigator
 
 import (
 	"github.com/HicaroD/hypersomnia/pages"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -15,30 +14,26 @@ var KEY_TO_PAGE map[tcell.Key]pages.Index = map[tcell.Key]pages.Index{
 
 type Navigator struct {
 	pages *tview.Pages
-	pageManager  *pages.Manager
 
 	CurrentPage  pages.Index
 	PreviousPage pages.Index
 }
 
-func New(p *tview.Pages, pm *pages.Manager) *Navigator {
+func New(p *tview.Pages) *Navigator {
 	navigator := Navigator{
 		pages:        p,
-		pageManager:  pm,
 		CurrentPage:  -1,
 		PreviousPage: -1,
 	}
 	return &navigator
 }
 
-func (navigator *Navigator) Navigate(index pages.Index) error {
-	name, page, err := navigator.pageManager.GetPage(index)
-	if err != nil {
-		return err
-	}
-	navigator.pages = navigator.pages.AddAndSwitchToPage(name, page, true)
+func (navigator *Navigator) Navigate(page pages.Page) error {
+	pageIndex := page.Index()
+	name := pages.NAMES[pageIndex]
+	navigator.pages = navigator.pages.AddAndSwitchToPage(name, page.Page(), true)
 	navigator.PreviousPage = navigator.CurrentPage
-	navigator.CurrentPage = index
+	navigator.CurrentPage = pageIndex
 	return nil
 }
 
@@ -46,7 +41,7 @@ func (navigator *Navigator) Pop() {
 	navigator.pages.RemovePage(pages.NAMES[navigator.CurrentPage])
 }
 
-func (navigator *Navigator) ShowPopup(popup *tview.Flex) {
+func (navigator *Navigator) ShowPopup(popup tview.Primitive) {
 	navigator.pages = navigator.pages.AddPage("popup", popup, true, true)
 	navigator.PreviousPage = navigator.CurrentPage
 	navigator.CurrentPage = pages.POPUP

@@ -5,6 +5,7 @@ import (
 
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
 	"github.com/HicaroD/hypersomnia/models"
+	"github.com/HicaroD/hypersomnia/popup"
 	utils "github.com/HicaroD/hypersomnia/utils"
 	widgets "github.com/HicaroD/hypersomnia/widgets"
 
@@ -15,7 +16,7 @@ import (
 type (
 	OnRequestCallback       func(hyperHttp.Request) (*hyperHttp.Response, error)
 	OnListEndpointsCallback func() ([]*models.Endpoint, error)
-	ShowPopupCallback       func(kind widgets.PopupKind, text string)
+	ShowPopupCallback       func(kind popup.PopupKind, text string)
 )
 
 type EndpointsPage struct {
@@ -70,7 +71,7 @@ func (page *EndpointsPage) Setup() {
 			}
 			response, err := page.onRequest(request)
 			if err != nil {
-				page.showPopup(widgets.POPUP_ERROR, err.Error())
+				page.showPopup(popup.POPUP_ERROR, err.Error())
 				break
 			}
 
@@ -105,6 +106,7 @@ func (page *EndpointsPage) Setup() {
 	page.main = main
 }
 
+func (page *EndpointsPage) Index() Index          { return ENDPOINTS }
 func (page *EndpointsPage) Page() tview.Primitive { return page.main }
 
 func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {

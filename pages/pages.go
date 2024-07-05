@@ -5,14 +5,9 @@ import (
 
 	db "github.com/HicaroD/hypersomnia/database"
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
-	widgets "github.com/HicaroD/hypersomnia/widgets"
+	"github.com/HicaroD/hypersomnia/popup"
 	"github.com/rivo/tview"
 )
-
-type Page interface {
-	Setup()
-	Page() tview.Primitive
-}
 
 type Index int
 
@@ -22,6 +17,12 @@ const (
 	POPUP
 	HELP
 )
+
+type Page interface {
+	Setup()
+	Index() Index
+	Page() tview.Primitive
+}
 
 var NAMES map[Index]string = map[Index]string{
 	WELCOME:   "welcome",
@@ -36,9 +37,11 @@ type Manager struct {
 	Help      *HelpPage
 }
 
-func New(client *hyperHttp.HttpClient, database *db.Database) *Manager {
+func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive)) *Manager {
 	// NOTE: should I initialize everything all at once?
-	ppm := &widgets.PopupManager{}
+	ppm := &popup.PopupManager{
+		ShowPopupCallback: showPopup,
+	}
 	ppm.Setup()
 
 	welcome := &WelcomePage{}
@@ -61,7 +64,7 @@ func New(client *hyperHttp.HttpClient, database *db.Database) *Manager {
 	}
 }
 
-func (pm *Manager) GetPage(index Index) (string, tview.Primitive, error) {
+func (pm *Manager) GetPage(index Index) (Page, error) {
 	var page Page
 	switch index {
 	case WELCOME:
@@ -71,12 +74,7 @@ func (pm *Manager) GetPage(index Index) (string, tview.Primitive, error) {
 	case ENDPOINTS:
 		page = pm.Endpoints
 	default:
-		return "", nil, fmt.Errorf("unimplemented page: %s", NAMES[index])
+		return nil, fmt.Errorf("unimplemented page: %s", NAMES[index])
 	}
-
-	name, ok := NAMES[index]
-	if !ok {
-		return "", nil, fmt.Errorf("page '%s' name not found", NAMES[index])
-	}
-	return name, page.Page(), nil
+	return page, nil
 }

@@ -9,7 +9,7 @@ import (
 
 	db "github.com/HicaroD/hypersomnia/database"
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
-	"github.com/HicaroD/hypersomnia/navigator"
+	nav "github.com/HicaroD/hypersomnia/navigator"
 	"github.com/HicaroD/hypersomnia/pages"
 
 	"github.com/gdamore/tcell/v2"
@@ -17,27 +17,31 @@ import (
 )
 
 type Hyper struct {
-	logFile   *os.File
-	app       *tview.Application
-	navigator *navigator.Navigator
+	logFile     *os.File
+	app         *tview.Application
+	navigator   *nav.Navigator
+	pageManager *pages.Manager
 }
 
-func NewHyper(pm *pages.Manager, logFile *os.File) *Hyper {
-	app := tview.NewApplication()
-	app.EnablePaste(true)
-	app.EnableMouse(true)
-
-	pages := tview.NewPages()
-	app.SetRoot(pages, true)
-
-	return &Hyper{logFile: logFile, app: app, navigator: navigator.New(pages, pm)}
+func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pages.Manager, logFile *os.File) *Hyper {
+	return &Hyper{
+		logFile:     logFile,
+		app:         app,
+		navigator:   navigator,
+		pageManager: pageManager,
+	}
 }
 
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
-	pageIndex, ok := navigator.KEY_TO_PAGE[pressedKey]
+	pageIndex, ok := nav.KEY_TO_PAGE[pressedKey]
 	if ok {
-		err := hyper.navigator.Navigate(pageIndex)
+		page, err := hyper.pageManager.GetPage(pageIndex)
+		if err != nil {
+			log.Fatalf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+		}
+
+		err = hyper.navigator.Navigate(page)
 		if err != nil {
 			log.Fatalf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
 		}
@@ -56,10 +60,17 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 
 func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(hyper.InputCapture)
-	err := hyper.navigator.Navigate(pages.WELCOME)
+
+	welcomePage, err := hyper.pageManager.GetPage(pages.WELCOME)
+	if err != nil {
+		log.Fatalf("unable to get welcome page due to the following error:\n%s", err)
+	}
+
+	err = hyper.navigator.Navigate(welcomePage)
 	if err != nil {
 		log.Fatalf("unable to navigate to welcome page due to the following error:\n%s", err)
 	}
+
 	if err := hyper.app.Run(); err != nil {
 		log.Fatalf("unable to execute application due to the following error:\n%s", err)
 	}
@@ -112,8 +123,16 @@ func main() {
 		},
 	)
 
-	pm := pages.New(client, database)
+	app := tview.NewApplication()
+	app.EnablePaste(true)
+	app.EnableMouse(true)
 
-	app := NewHyper(pm, logFile)
-	app.Run()
+	hyperPages := tview.NewPages()
+	app.SetRoot(hyperPages, true)
+
+	navigator := nav.New(hyperPages)
+	pageManager := pages.New(client, database, navigator.ShowPopup)
+
+	hyper := NewHyper(app, navigator, pageManager, logFile)
+	hyper.Run()
 }
