@@ -40,7 +40,7 @@ type Manager struct {
 func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive)) *Manager {
 	// NOTE: should I initialize everything all at once?
 	ppm := &popup.PopupManager{
-		ShowPopupCallback: showPopup,
+		OnShowPopup: showPopup,
 	}
 	ppm.Setup()
 

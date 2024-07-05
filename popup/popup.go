@@ -13,11 +13,13 @@ const (
 	POPUP_WARNING
 )
 
-type PopupManager struct {
-	ShowPopupCallback func(tview.Primitive)
+type ShowPopupCallback func(tview.Primitive)
 
-	main      *tview.Flex
-	content   *tview.TextView
+type PopupManager struct {
+	OnShowPopup ShowPopupCallback
+
+	main    *tview.Flex
+	content *tview.TextView
 }
 
 func (ppm *PopupManager) Setup() *tview.Flex {
@@ -58,5 +60,5 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 	ppm.content.SetText(text)
 	ppm.content.SetBorderColor(borderColor)
 
-	ppm.ShowPopupCallback(ppm.main)
+	ppm.OnShowPopup(ppm.main)
 }
