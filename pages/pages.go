@@ -5,6 +5,7 @@ import (
 
 	db "github.com/HicaroD/hypersomnia/database"
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
+	widgets "github.com/HicaroD/hypersomnia/widgets"
 	"github.com/rivo/tview"
 )
 
@@ -37,6 +38,8 @@ type Manager struct {
 
 func New(client *hyperHttp.HttpClient, database *db.Database) *Manager {
 	// NOTE: should I initialize everything all at once?
+	ppm := &widgets.PopupManager{}
+	ppm.Setup()
 
 	welcome := &WelcomePage{}
 	welcome.Setup()
@@ -44,6 +47,7 @@ func New(client *hyperHttp.HttpClient, database *db.Database) *Manager {
 	endpoints := &EndpointsPage{
 		onRequest:       client.DoRequest,
 		onListEndpoints: database.ListEndpoints,
+		showPopup:       ppm.ShowPopup,
 	}
 	endpoints.Setup()
 

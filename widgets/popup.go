@@ -16,9 +16,6 @@ const (
 type PopupManager struct {
 	main    *tview.Flex
 	content *tview.TextView
-
-	Key        tcell.Key
-	OnKeyPress func()
 }
 
 func (ppm *PopupManager) Setup() *tview.Flex {
@@ -58,12 +55,4 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 	ppm.content.SetTitle(title)
 	ppm.content.SetText(text)
 	ppm.content.SetBorderColor(borderColor)
-	ppm.content.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		pressedKey := event.Key()
-		switch pressedKey {
-		case ppm.Key:
-			ppm.OnKeyPress()
-		}
-		return event
-	})
 }

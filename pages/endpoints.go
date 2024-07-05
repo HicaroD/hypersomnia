@@ -73,6 +73,7 @@ func (page *EndpointsPage) Setup() {
 				page.showPopup(widgets.POPUP_ERROR, err.Error())
 				break
 			}
+
 			page.response.SetText(response.Body)
 		}
 		return event

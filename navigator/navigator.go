@@ -15,18 +15,18 @@ var KEY_TO_PAGE map[tcell.Key]pages.Index = map[tcell.Key]pages.Index{
 
 type Navigator struct {
 	pages *tview.Pages
-
 	pageManager  *pages.Manager
-	currentPage  pages.Index
-	previousPage pages.Index
+
+	CurrentPage  pages.Index
+	PreviousPage pages.Index
 }
 
 func New(p *tview.Pages, pm *pages.Manager) *Navigator {
 	navigator := Navigator{
 		pages:        p,
 		pageManager:  pm,
-		currentPage:  -1,
-		previousPage: -1,
+		CurrentPage:  -1,
+		PreviousPage: -1,
 	}
 	return &navigator
 }
@@ -37,17 +37,17 @@ func (navigator *Navigator) Navigate(index pages.Index) error {
 		return err
 	}
 	navigator.pages = navigator.pages.AddAndSwitchToPage(name, page, true)
-	navigator.previousPage = navigator.currentPage
-	navigator.currentPage = index
+	navigator.PreviousPage = navigator.CurrentPage
+	navigator.CurrentPage = index
 	return nil
 }
 
 func (navigator *Navigator) Pop() {
-	navigator.pages.RemovePage(pages.NAMES[navigator.currentPage])
+	navigator.pages.RemovePage(pages.NAMES[navigator.CurrentPage])
 }
 
 func (navigator *Navigator) ShowPopup(popup *tview.Flex) {
 	navigator.pages = navigator.pages.AddPage("popup", popup, true, true)
-	navigator.previousPage = navigator.currentPage
-	navigator.currentPage = pages.POPUP
+	navigator.PreviousPage = navigator.CurrentPage
+	navigator.CurrentPage = pages.POPUP
 }

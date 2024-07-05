@@ -36,13 +36,21 @@ func NewHyper(pm *pages.Manager, logFile *os.File) *Hyper {
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
 	pageIndex, ok := navigator.KEY_TO_PAGE[pressedKey]
-	if !ok {
+	if ok {
+		err := hyper.navigator.Navigate(pageIndex)
+		if err != nil {
+			log.Fatalf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+		}
 		return event
 	}
-	err := hyper.navigator.Navigate(pageIndex)
-	if err != nil {
-		log.Fatalf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+
+	switch pressedKey {
+	case tcell.KeyEsc:
+		if hyper.navigator.CurrentPage == pages.POPUP {
+			hyper.navigator.Pop()
+		}
 	}
+
 	return event
 }
 
@@ -103,6 +111,7 @@ func main() {
 			Timeout: 30 * time.Second,
 		},
 	)
+
 	pm := pages.New(client, database)
 
 	app := NewHyper(pm, logFile)
