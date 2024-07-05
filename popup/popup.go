@@ -13,10 +13,10 @@ const (
 	POPUP_WARNING
 )
 
-type ShowPopupCallback func(tview.Primitive)
+type ShowPopupWidgetCallback func(tview.Primitive)
 
 type PopupManager struct {
-	OnShowPopup ShowPopupCallback
+	OnShowPopup ShowPopupWidgetCallback
 
 	main    *tview.Flex
 	content *tview.TextView
