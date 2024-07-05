@@ -25,6 +25,7 @@ func (ppm *PopupManager) Setup() *tview.Flex {
 	content := tview.NewTextView()
 	content.SetBorder(true)
 	content.SetBackgroundColor(utils.COLOR_DARK_GREY)
+
 	popup := tview.NewFlex().
 		AddItem(nil, 0, 1, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
@@ -32,6 +33,10 @@ func (ppm *PopupManager) Setup() *tview.Flex {
 			AddItem(content, 10, 1, true).
 			AddItem(nil, 0, 1, false), 40, 1, true).
 		AddItem(nil, 0, 1, false)
+
+	ppm.content = content
+	ppm.main = popup
+
 	return popup
 }
 
@@ -53,12 +58,12 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 	ppm.content.SetTitle(title)
 	ppm.content.SetText(text)
 	ppm.content.SetBorderColor(borderColor)
-	// ppm.content.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-	// 	pressedKey := event.Key()
-	// 	switch pressedKey {
-	// 	case key:
-	// 		onKeyPress()
-	// 	}
-	// 	return event
-	// })
+	ppm.content.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		pressedKey := event.Key()
+		switch pressedKey {
+		case ppm.Key:
+			ppm.OnKeyPress()
+		}
+		return event
+	})
 }
