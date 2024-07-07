@@ -1,9 +1,8 @@
 package pages
 
 import (
-	"log"
-
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
+	"github.com/HicaroD/hypersomnia/logger"
 	"github.com/HicaroD/hypersomnia/models"
 	"github.com/HicaroD/hypersomnia/popup"
 	utils "github.com/HicaroD/hypersomnia/utils"
@@ -34,10 +33,11 @@ type EndpointsPage struct {
 	showPopup       ShowPopupCallback
 }
 
-func (page *EndpointsPage) Setup() {
+func (page *EndpointsPage) Setup() error {
 	endpoints, err := page.onListEndpoints()
 	if err != nil {
-		log.Fatal(err)
+		logger.Error.Printf("unable to retrieve all endpoints from database: %s\n", err)
+		return err
 	}
 	page.endpoints = endpoints
 
@@ -104,6 +104,7 @@ func (page *EndpointsPage) Setup() {
 	)
 
 	page.main = main
+	return nil
 }
 
 func (page *EndpointsPage) Index() Index          { return ENDPOINTS }

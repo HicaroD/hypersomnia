@@ -19,7 +19,7 @@ const (
 )
 
 type Page interface {
-	Setup()
+	Setup() error
 	Index() Index
 	Page() tview.Primitive
 }
@@ -37,7 +37,7 @@ type Manager struct {
 	Help      *HelpPage
 }
 
-func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive)) *Manager {
+func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive)) (*Manager, error) {
 	// NOTE: should I initialize everything all at once?
 	ppm := &popup.PopupManager{
 		OnShowPopup: showPopup,
@@ -45,23 +45,32 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 	ppm.Setup()
 
 	welcome := &WelcomePage{}
-	welcome.Setup()
+	err := welcome.Setup()
+	if err != nil {
+		return nil, err
+	}
 
 	endpoints := &EndpointsPage{
 		onRequest:       client.DoRequest,
 		onListEndpoints: database.ListEndpoints,
 		showPopup:       ppm.ShowPopup,
 	}
-	endpoints.Setup()
+	err = endpoints.Setup()
+	if err != nil {
+		return nil, err
+	}
 
 	help := &HelpPage{}
-	help.Setup()
+	err = help.Setup()
+	if err != nil {
+		return nil, err
+	}
 
 	return &Manager{
 		Welcome:   welcome,
 		Endpoints: endpoints,
 		Help:      help,
-	}
+	}, nil
 }
 
 func (pm *Manager) GetPage(index Index) (Page, error) {

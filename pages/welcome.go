@@ -15,7 +15,7 @@ type WelcomePage struct {
 	main *tview.TextView
 }
 
-func (page *WelcomePage) Setup() {
+func (page *WelcomePage) Setup() error {
 	welcomeText := tview.NewTextView()
 	welcomeText.SetBorder(true)
 	welcomeText.SetText(WELCOME_MESSAGE)
@@ -24,6 +24,7 @@ func (page *WelcomePage) Setup() {
 	welcomeText.SetBackgroundColor(utils.COLOR_WELCOME_DARK_BACKGROUND)
 
 	page.main = welcomeText
+	return nil
 }
 
 func (page *WelcomePage) Index() Index          { return WELCOME }

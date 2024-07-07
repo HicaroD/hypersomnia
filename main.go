@@ -1,8 +1,9 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	db "github.com/HicaroD/hypersomnia/database"
@@ -14,6 +15,13 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
+
+var EXIT_MESSAGE string = "an unexpected error ocurred, please go to https://github.com/HicaroD/hypersomnia and report an issue!"
+
+func exitAppWithUnexpectedError() {
+	fmt.Println(EXIT_MESSAGE)
+	os.Exit(1)
+}
 
 type Hyper struct {
 	app         *tview.Application
@@ -35,12 +43,16 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	if ok {
 		page, err := hyper.pageManager.GetPage(pageIndex)
 		if err != nil {
-			log.Fatalf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			// TODO: show popup here
+			logger.Error.Printf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			exitAppWithUnexpectedError()
 		}
 
 		err = hyper.navigator.Navigate(page)
 		if err != nil {
-			log.Fatalf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			// TODO: show popup here
+			logger.Error.Printf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			exitAppWithUnexpectedError()
 		}
 		return event
 	}
@@ -60,16 +72,22 @@ func (hyper *Hyper) Run() {
 
 	welcomePage, err := hyper.pageManager.GetPage(pages.WELCOME)
 	if err != nil {
-		log.Fatalf("unable to get welcome page due to the following error:\n%s", err)
+		// TODO: show popup here
+		logger.Error.Printf("unable to get welcome page due to the following error:\n%s", err)
+		return
 	}
 
 	err = hyper.navigator.Navigate(welcomePage)
 	if err != nil {
-		log.Fatalf("unable to navigate to welcome page due to the following error:\n%s", err)
+		// TODO: show popup here
+		logger.Error.Printf("unable to navigate to welcome page due to the following error:\n%s", err)
+		return
 	}
 
 	if err := hyper.app.Run(); err != nil {
-		log.Fatalf("unable to execute application due to the following error:\n%s", err)
+		// TODO: show popup here
+		logger.Error.Printf("unable to execute application due to the following error:\n%s", err)
+		return
 	}
 }
 
@@ -121,7 +139,10 @@ func main() {
 	app.SetRoot(hyperPages, true)
 
 	navigator := nav.New(hyperPages)
-	pageManager := pages.New(client, database, navigator.ShowPopup)
+	pageManager, err := pages.New(client, database, navigator.ShowPopup)
+	if err != nil {
+		return
+	}
 
 	hyper := NewHyper(app, navigator, pageManager)
 	hyper.Run()

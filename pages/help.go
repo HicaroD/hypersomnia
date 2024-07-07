@@ -14,7 +14,7 @@ type HelpPage struct {
 	main *tview.TextView
 }
 
-func (page *HelpPage) Setup() {
+func (page *HelpPage) Setup() error {
 	help := tview.NewTextView()
 	help.SetBorder(true)
 	help.SetText(HELP_MESSAGE)
@@ -22,6 +22,7 @@ func (page *HelpPage) Setup() {
 	help.SetTextAlign(tview.AlignCenter)
 	help.SetBackgroundColor(utils.COLOR_WELCOME_DARK_BACKGROUND)
 	page.main = help
+	return nil
 }
 
 func (page *HelpPage) Index() Index          { return HELP }
