@@ -76,12 +76,14 @@ func (hyper *Hyper) Run() {
 func main() {
 	err := logger.InitLogFile()
 	if err != nil {
-		log.Fatalf("unable to init logger: %s\n", err)
+		logger.Error.Printf("unable to init logger: %s\n", err)
+		return
 	}
 	defer func() {
 		err := logger.Close()
 		if err != nil {
-			log.Fatalf("unable to close log file: %s\n", err)
+			logger.Error.Printf("unable to close log file: %s\n", err)
+			return
 		}
 	}()
 
@@ -90,12 +92,14 @@ func main() {
 	// TODO: create database in the configuration folder
 	database, err := db.New("endpoints.sqlite")
 	if err != nil {
-		log.Fatalf("unable to open SQLite3 database: %s\n", err)
+		logger.Error.Printf("unable to open SQLite3 database: %s\n", err)
+		return
 	}
 	defer func() {
 		err := database.Close()
 		if err != nil {
-			log.Fatalf("unable to close SQLite3 database: %s\n", err)
+			logger.Error.Printf("unable to close SQLite3 database: %s\n", err)
+			return
 		}
 	}()
 
