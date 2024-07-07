@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	db "github.com/HicaroD/hypersomnia/database"
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
+	"github.com/HicaroD/hypersomnia/logger"
 	nav "github.com/HicaroD/hypersomnia/navigator"
 	"github.com/HicaroD/hypersomnia/pages"
 
@@ -17,15 +16,13 @@ import (
 )
 
 type Hyper struct {
-	logFile     *os.File
 	app         *tview.Application
 	navigator   *nav.Navigator
 	pageManager *pages.Manager
 }
 
-func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pages.Manager, logFile *os.File) *Hyper {
+func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pages.Manager) *Hyper {
 	return &Hyper{
-		logFile:     logFile,
 		app:         app,
 		navigator:   navigator,
 		pageManager: pageManager,
@@ -76,35 +73,22 @@ func (hyper *Hyper) Run() {
 	}
 }
 
-func buildLogFile() (*os.File, error) {
-	logFile, err := os.Create("log.txt")
-	if err != nil {
-		return nil, err
-	}
-	_, err = fmt.Fprintf(logFile, "------------------ %s ------------------\n", time.Now().Local())
-	if err != nil {
-		return nil, err
-	}
-	return logFile, nil
-}
-
 func main() {
-	// TODO: create log file in the configuration folder
-	// TODO: passing this file around is boring, is there a way to make it
-	// global, so I can log anything anywhere I want?
-	logFile, err := buildLogFile()
+	err := logger.InitLogFile()
 	if err != nil {
-		log.Fatalf("unable to build log file: %s\n", err)
+		log.Fatalf("unable to init logger: %s\n", err)
 	}
 	defer func() {
-		err := logFile.Close()
+		err := logger.Close()
 		if err != nil {
 			log.Fatalf("unable to close log file: %s\n", err)
 		}
 	}()
 
+	logger.Info.Println("Logger initialized successfuly")
+
 	// TODO: create database in the configuration folder
-	database, err := db.New("endpoints.sqlite", logFile)
+	database, err := db.New("endpoints.sqlite")
 	if err != nil {
 		log.Fatalf("unable to open SQLite3 database: %s\n", err)
 	}
@@ -114,6 +98,8 @@ func main() {
 			log.Fatalf("unable to close SQLite3 database: %s\n", err)
 		}
 	}()
+
+	logger.Info.Println("Database initialized successfuly")
 
 	client := hyperHttp.New(
 		&http.Client{
@@ -133,6 +119,6 @@ func main() {
 	navigator := nav.New(hyperPages)
 	pageManager := pages.New(client, database, navigator.ShowPopup)
 
-	hyper := NewHyper(app, navigator, pageManager, logFile)
+	hyper := NewHyper(app, navigator, pageManager)
 	hyper.Run()
 }

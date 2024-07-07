@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	models "github.com/HicaroD/hypersomnia/models"
-	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -27,11 +26,10 @@ CREATE TABLE IF NOT EXISTS endpoint (
 `
 
 type Database struct {
-	logFile *os.File
-	conn    *sql.DB
+	conn *sql.DB
 }
 
-func New(dbPath string, logFile *os.File) (*Database, error) {
+func New(dbPath string) (*Database, error) {
 	conn, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open SQLite3 database: %s\n", err)
@@ -39,7 +37,7 @@ func New(dbPath string, logFile *os.File) (*Database, error) {
 	if _, err := conn.Exec(SCHEMA); err != nil {
 		return nil, err
 	}
-	return &Database{conn: conn, logFile: logFile}, nil
+	return &Database{conn: conn}, nil
 }
 
 func (db *Database) ListEndpoints() ([]*models.Endpoint, error) {

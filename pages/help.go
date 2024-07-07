@@ -24,5 +24,5 @@ func (page *HelpPage) Setup() {
 	page.main = help
 }
 
-func (page *HelpPage) Index() Index       { return HELP }
+func (page *HelpPage) Index() Index          { return HELP }
 func (page *HelpPage) Page() tview.Primitive { return page.main }
