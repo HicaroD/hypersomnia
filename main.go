@@ -2,87 +2,148 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"net/http"
 	"os"
 	"time"
+
+	db "github.com/HicaroD/hypersomnia/database"
+	hyperHttp "github.com/HicaroD/hypersomnia/http"
+	"github.com/HicaroD/hypersomnia/logger"
+	nav "github.com/HicaroD/hypersomnia/navigator"
+	"github.com/HicaroD/hypersomnia/pages"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-type Hyper struct {
-	logFile   *os.File
-	app       *tview.Application
-	navigator *HyperNavigator
+var EXIT_MESSAGE string = "an unexpected error ocurred, please go to https://github.com/HicaroD/hypersomnia and report an issue!"
+
+func exitAppWithUnexpectedError() {
+	fmt.Println(EXIT_MESSAGE)
+	os.Exit(1)
 }
 
-func NewHyper(db *HyperDB, logFile *os.File) *Hyper {
-	app := tview.NewApplication()
-	app.EnablePaste(true)
-	app.EnableMouse(true)
+type Hyper struct {
+	app         *tview.Application
+	navigator   *nav.Navigator
+	pageManager *pages.Manager
+}
 
-	pages := tview.NewPages()
-	app.SetRoot(pages, true)
-
-	return &Hyper{logFile: logFile, app: app, navigator: NewNavigator(pages, db)}
+func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pages.Manager) *Hyper {
+	return &Hyper{
+		app:         app,
+		navigator:   navigator,
+		pageManager: pageManager,
+	}
 }
 
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
-	pageIndex, ok := KEY_TO_PAGE[pressedKey]
+	pageIndex, ok := nav.KEY_TO_PAGE[pressedKey]
 	if ok {
-		hyper.navigator.Navigate(pageIndex)
+		page, err := hyper.pageManager.GetPage(pageIndex)
+		if err != nil {
+			// TODO: show popup here
+			logger.Error.Printf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			exitAppWithUnexpectedError()
+		}
+
+		err = hyper.navigator.Navigate(page)
+		if err != nil {
+			// TODO: show popup here
+			logger.Error.Printf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			exitAppWithUnexpectedError()
+		}
+		return event
 	}
+
+	switch pressedKey {
+	case tcell.KeyEsc:
+		if hyper.navigator.CurrentPage == pages.POPUP {
+			hyper.navigator.Pop()
+		}
+	}
+
 	return event
 }
 
 func (hyper *Hyper) Run() {
 	hyper.app.SetInputCapture(hyper.InputCapture)
-	hyper.navigator.Navigate(WELCOME)
-	if err := hyper.app.Run(); err != nil {
-		log.Fatalf("Unable to execute application due to the following error:\n%s", err)
-	}
-}
 
-func buildLogFile() (*os.File, error) {
-	logFile, err := os.Create("log.txt")
+	welcomePage, err := hyper.pageManager.GetPage(pages.WELCOME)
 	if err != nil {
-		return nil, err
+		// TODO: show popup here
+		logger.Error.Printf("unable to get welcome page due to the following error:\n%s", err)
+		return
 	}
-	_, err = fmt.Fprintf(logFile, "------------------ %s ------------------\n", time.Now().Local())
+
+	err = hyper.navigator.Navigate(welcomePage)
 	if err != nil {
-		return nil, err
+		// TODO: show popup here
+		logger.Error.Printf("unable to navigate to welcome page due to the following error:\n%s", err)
+		return
 	}
-	return logFile, nil
+
+	if err := hyper.app.Run(); err != nil {
+		// TODO: show popup here
+		logger.Error.Printf("unable to execute application due to the following error:\n%s", err)
+		return
+	}
 }
 
 func main() {
-	// TODO: create log file in the configuration folder
-	// TODO: passing this file around is boring, is there a way to make it
-	// global, so I can log anything at any place
-	logFile, err := buildLogFile()
+	err := logger.InitLogFile()
 	if err != nil {
-		log.Fatalf("unable to build log file: %s\n", err)
+		logger.Error.Printf("unable to init logger: %s\n", err)
+		return
 	}
 	defer func() {
-		err := logFile.Close()
+		err := logger.Close()
 		if err != nil {
-			log.Fatalf("unable to close log file: %s\n", err)
+			logger.Error.Printf("unable to close log file: %s\n", err)
+			return
 		}
 	}()
+
+	logger.Info.Println("Logger initialized successfuly")
 
 	// TODO: create database in the configuration folder
-	db, err := NewHyperDB("endpoints.sqlite", logFile)
+	database, err := db.New("endpoints.sqlite")
 	if err != nil {
-		log.Fatalf("unable to open SQLite3 database: %s\n", err)
+		logger.Error.Printf("unable to open SQLite3 database: %s\n", err)
+		return
 	}
 	defer func() {
-		err := db.Close()
+		err := database.Close()
 		if err != nil {
-			log.Fatalf("unable to close SQLite3 database: %s\n", err)
+			logger.Error.Printf("unable to close SQLite3 database: %s\n", err)
+			return
 		}
 	}()
 
-	app := NewHyper(db, logFile)
-	app.Run()
+	logger.Info.Println("Database initialized successfuly")
+
+	client := hyperHttp.New(
+		&http.Client{
+			// TODO: 30 seconds by default, but user should be able to decide the
+			// timeout
+			Timeout: 30 * time.Second,
+		},
+	)
+
+	app := tview.NewApplication()
+	app.EnablePaste(true)
+	app.EnableMouse(true)
+
+	hyperPages := tview.NewPages()
+	app.SetRoot(hyperPages, true)
+
+	navigator := nav.New(hyperPages)
+	pageManager, err := pages.New(client, database, navigator.ShowPopup)
+	if err != nil {
+		return
+	}
+
+	hyper := NewHyper(app, navigator, pageManager)
+	hyper.Run()
 }
