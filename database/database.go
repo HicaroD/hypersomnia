@@ -8,9 +8,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var SCHEMA string = `
+var SQL string = `
+CREATE TABLE IF NOT EXISTS collection (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(100)
+);
+
 CREATE TABLE IF NOT EXISTS endpoint (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  collection_id INTEGER,
 
   method VARCHAR(10) NOT NULL,
   url VARCHAR(255) NOT NULL,
@@ -21,7 +27,9 @@ CREATE TABLE IF NOT EXISTS endpoint (
 
   response_body_type VARCHAR(50),
   response_body TEXT,
-  status_code INTEGER
+  status_code INTEGER,
+
+  FOREIGN KEY(collection_id) REFERENCES collection(id)
 )
 `
 
@@ -34,7 +42,7 @@ func New(dbPath string) (*Database, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to open SQLite3 database: %s\n", err)
 	}
-	if _, err := conn.Exec(SCHEMA); err != nil {
+	if _, err := conn.Exec(SQL); err != nil {
 		return nil, err
 	}
 	return &Database{conn: conn}, nil
