@@ -16,11 +16,13 @@ import (
 	"github.com/rivo/tview"
 )
 
-var EXIT_MESSAGE string = "an unexpected error ocurred, please go to https://github.com/HicaroD/hypersomnia and report an issue!"
+var EXIT_MESSAGE string = "an unexpected error ocurred, please see the log file, go to https://github.com/HicaroD/hypersomnia and report an issue!"
 
-func exitAppWithUnexpectedError() {
+func exitAppWithUnexpectedError(exit bool) {
 	fmt.Println(EXIT_MESSAGE)
-	os.Exit(1)
+	if exit {
+		os.Exit(1)
+	}
 }
 
 type Hyper struct {
@@ -45,14 +47,14 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 		if err != nil {
 			// TODO: show popup here
 			logger.Error.Printf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			exitAppWithUnexpectedError()
+			exitAppWithUnexpectedError(true)
 		}
 
 		err = hyper.navigator.Navigate(page)
 		if err != nil {
 			// TODO: show popup here
 			logger.Error.Printf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			exitAppWithUnexpectedError()
+			exitAppWithUnexpectedError(true)
 		}
 		return event
 	}
@@ -95,12 +97,14 @@ func main() {
 	err := logger.InitLogFile()
 	if err != nil {
 		logger.Error.Printf("unable to init logger: %s\n", err)
+		exitAppWithUnexpectedError(false)
 		return
 	}
 	defer func() {
 		err := logger.Close()
 		if err != nil {
 			logger.Error.Printf("unable to close log file: %s\n", err)
+			exitAppWithUnexpectedError(false)
 			return
 		}
 	}()
@@ -111,12 +115,14 @@ func main() {
 	database, err := db.New("endpoints.sqlite")
 	if err != nil {
 		logger.Error.Printf("unable to open SQLite3 database: %s\n", err)
+		exitAppWithUnexpectedError(false)
 		return
 	}
 	defer func() {
 		err := database.Close()
 		if err != nil {
 			logger.Error.Printf("unable to close SQLite3 database: %s\n", err)
+			exitAppWithUnexpectedError(false)
 			return
 		}
 	}()
@@ -141,6 +147,7 @@ func main() {
 	navigator := nav.New(hyperPages)
 	pageManager, err := pages.New(client, database, navigator.ShowPopup)
 	if err != nil {
+		exitAppWithUnexpectedError(false)
 		return
 	}
 
