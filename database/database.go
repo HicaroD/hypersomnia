@@ -1,6 +1,8 @@
 package database
 
 import (
+	_ "embed"
+
 	"database/sql"
 	"fmt"
 	models "github.com/HicaroD/hypersomnia/models"
@@ -8,30 +10,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var SQL string = `
-CREATE TABLE IF NOT EXISTS collection (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	name VARCHAR(100)
-);
-
-CREATE TABLE IF NOT EXISTS endpoint (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  collection_id INTEGER,
-
-  method VARCHAR(10) NOT NULL,
-  url VARCHAR(255) NOT NULL,
-  query_params TEXT,
-  headers TEXT,
-  request_body_type VARCHAR(50),
-  request_body TEXT,
-
-  response_body_type VARCHAR(50),
-  response_body TEXT,
-  status_code INTEGER,
-
-  FOREIGN KEY(collection_id) REFERENCES collection(id)
-)
-`
+//go:embed schema.sql
+var SQL string
 
 type Database struct {
 	conn *sql.DB
@@ -48,8 +28,26 @@ func New(dbPath string) (*Database, error) {
 	return &Database{conn: conn}, nil
 }
 
+func (db *Database) ListCollections() ([]*models.Collection, error) {
+	rows, err := db.conn.Query("SELECT * FROM collection;")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var collections []*models.Collection
+	for rows.Next() {
+		collection, err := db.getCollectionFromQueryRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		collections = append(collections, collection)
+	}
+	return collections, nil
+}
+
 func (db *Database) ListEndpoints() ([]*models.Endpoint, error) {
-	rows, err := db.conn.Query("SELECT * FROM endpoint")
+	rows, err := db.conn.Query("SELECT * FROM endpoint;")
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +75,14 @@ func (db *Database) getEndpointFromQueryRow(rows *sql.Rows) (*models.Endpoint, e
 		return nil, err
 	}
 	return &endpoint, nil
+}
+
+func (db *Database) getCollectionFromQueryRow(rows *sql.Rows) (*models.Collection, error) {
+	var collection models.Collection
+	if err := rows.Scan(&collection.Id, &collection.Name); err != nil {
+		return nil, err
+	}
+	return &collection, nil
 }
 
 func (db *Database) Close() error {
