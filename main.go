@@ -18,11 +18,9 @@ import (
 
 var EXIT_MESSAGE string = "an unexpected error ocurred, please see the log file, go to https://github.com/HicaroD/hypersomnia and report an issue!"
 
-func exitAppWithUnexpectedError(exit bool) {
+func exitAppWithUnexpectedError() {
 	fmt.Println(EXIT_MESSAGE)
-	if exit {
-		os.Exit(1)
-	}
+	os.Exit(1)
 }
 
 type Hyper struct {
@@ -47,14 +45,14 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 		if err != nil {
 			// TODO: show popup here
 			logger.Error.Printf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			exitAppWithUnexpectedError(true)
+			exitAppWithUnexpectedError()
 		}
 
 		err = hyper.navigator.Navigate(page)
 		if err != nil {
 			// TODO: show popup here
 			logger.Error.Printf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			exitAppWithUnexpectedError(true)
+			exitAppWithUnexpectedError()
 		}
 		return event
 	}
@@ -97,14 +95,14 @@ func main() {
 	err := logger.InitLogFile()
 	if err != nil {
 		logger.Error.Printf("unable to init logger: %s\n", err)
-		exitAppWithUnexpectedError(false)
+		exitAppWithUnexpectedError()
 		return
 	}
 	defer func() {
 		err := logger.Close()
 		if err != nil {
 			logger.Error.Printf("unable to close log file: %s\n", err)
-			exitAppWithUnexpectedError(false)
+			exitAppWithUnexpectedError()
 			return
 		}
 	}()
@@ -115,14 +113,14 @@ func main() {
 	database, err := db.New("endpoints.sqlite")
 	if err != nil {
 		logger.Error.Printf("unable to open SQLite3 database: %s\n", err)
-		exitAppWithUnexpectedError(false)
+		exitAppWithUnexpectedError()
 		return
 	}
 	defer func() {
 		err := database.Close()
 		if err != nil {
 			logger.Error.Printf("unable to close SQLite3 database: %s\n", err)
-			exitAppWithUnexpectedError(false)
+			exitAppWithUnexpectedError()
 			return
 		}
 	}()
@@ -147,7 +145,7 @@ func main() {
 	navigator := nav.New(hyperPages)
 	pageManager, err := pages.New(client, database, navigator.ShowPopup)
 	if err != nil {
-		exitAppWithUnexpectedError(false)
+		exitAppWithUnexpectedError()
 		return
 	}
 
