@@ -33,7 +33,7 @@ func (page *NewCollection) Setup() error {
 						// TODO: show popup here as well
 						panic(err)
 					}
-					// TODO: close it after everything
+					// TODO: close widget
 				},
 			),
 			Proportion: 1,
@@ -44,7 +44,7 @@ func (page *NewCollection) Setup() error {
 				utils.COLOR_DARK_GREY,
 				/* border= */ true,
 				func() {
-					// TODO: close it
+					// TODO: close widget
 				},
 			),
 			Proportion: 1,
