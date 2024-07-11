@@ -48,7 +48,7 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			exitAppWithUnexpectedError()
 		}
 
-		err = hyper.navigator.Navigate(page)
+		err = hyper.navigator.Navigate(page, true)
 		if err != nil {
 			// TODO: show popup here
 			logger.Error.Printf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
@@ -61,6 +61,15 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	case tcell.KeyEsc:
 		if hyper.navigator.CurrentPage == pages.POPUP {
 			hyper.navigator.Pop()
+		}
+	case tcell.KeyCtrlN:
+		newCollection, err := hyper.pageManager.GetPage(pages.NEW_COLLECTION)
+		if err != nil {
+			panic(err)
+		}
+		err = hyper.navigator.Navigate(newCollection, false)
+		if err != nil {
+			panic(err)
 		}
 	}
 
@@ -77,7 +86,7 @@ func (hyper *Hyper) Run() {
 		return
 	}
 
-	err = hyper.navigator.Navigate(welcomePage)
+	err = hyper.navigator.Navigate(welcomePage, true)
 	if err != nil {
 		// TODO: show popup here
 		logger.Error.Printf("unable to navigate to welcome page due to the following error:\n%s", err)

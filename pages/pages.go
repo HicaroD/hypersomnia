@@ -16,6 +16,7 @@ const (
 	ENDPOINTS
 	POPUP
 	HELP
+	NEW_COLLECTION
 )
 
 type Page interface {
@@ -25,16 +26,18 @@ type Page interface {
 }
 
 var NAMES map[Index]string = map[Index]string{
-	WELCOME:   "welcome",
-	ENDPOINTS: "endpoints",
-	POPUP:     "popup",
-	HELP:      "help",
+	WELCOME:        "welcome",
+	ENDPOINTS:      "endpoints",
+	POPUP:          "popup",
+	HELP:           "help",
+	NEW_COLLECTION: "new_collection",
 }
 
 type Manager struct {
-	Welcome   *WelcomePage
-	Endpoints *EndpointsPage
-	Help      *HelpPage
+	Welcome       *WelcomePage
+	Endpoints     *EndpointsPage
+	Help          *HelpPage
+	NewCollection *NewCollection
 }
 
 func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive)) (*Manager, error) {
@@ -66,10 +69,19 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		return nil, err
 	}
 
+	newCollection := &NewCollection{
+		OnAddNewCollection: database.AddNewCollection,
+	}
+	err = newCollection.Setup()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Manager{
-		Welcome:   welcome,
-		Endpoints: endpoints,
-		Help:      help,
+		Welcome:       welcome,
+		Endpoints:     endpoints,
+		Help:          help,
+		NewCollection: newCollection,
 	}, nil
 }
 
@@ -82,6 +94,8 @@ func (pm *Manager) GetPage(index Index) (Page, error) {
 		page = pm.Help
 	case ENDPOINTS:
 		page = pm.Endpoints
+	case NEW_COLLECTION:
+		page = pm.NewCollection
 	default:
 		return nil, fmt.Errorf("unimplemented page: %s", NAMES[index])
 	}

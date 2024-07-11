@@ -28,6 +28,11 @@ func New(dbPath string) (*Database, error) {
 	return &Database{conn: conn}, nil
 }
 
+func (db *Database) AddNewCollection(name string) error {
+	// TODO: add new collection to database
+	return nil
+}
+
 func (db *Database) ListCollections() ([]*models.Collection, error) {
 	rows, err := db.conn.Query("SELECT * FROM collection;")
 	if err != nil {
