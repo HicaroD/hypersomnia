@@ -8,4 +8,5 @@ var (
 	COLOR_BLACK                   = tcell.ColorBlack
 	COLOR_POPUP_RED               = tcell.ColorRed
 	COLOR_POPUP_YELLOW            = tcell.ColorYellow
+	COLOR_POPUP_GREEN             = tcell.ColorGreen
 )

@@ -72,6 +72,7 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 	newCollection := &NewCollection{
 		onAddNewCollection: database.AddNewCollection,
 		onPopPage:          popPage,
+		onShowPopup:        ppm.ShowPopup,
 	}
 	err = newCollection.Setup()
 	if err != nil {

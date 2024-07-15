@@ -1,14 +1,12 @@
 package pages
 
 import (
+	"fmt"
+
+	"github.com/HicaroD/hypersomnia/popup"
 	utils "github.com/HicaroD/hypersomnia/utils"
 	widgets "github.com/HicaroD/hypersomnia/widgets"
 	"github.com/rivo/tview"
-)
-
-type (
-	OnAddNewCollectionCallback func(name string) error
-	OnPopPageCallback          func()
 )
 
 type NewCollection struct {
@@ -17,6 +15,7 @@ type NewCollection struct {
 
 	onAddNewCollection OnAddNewCollectionCallback
 	onPopPage          OnPopPageCallback
+	onShowPopup        OnShowPopupCallback
 }
 
 func (page *NewCollection) Setup() error {
@@ -34,11 +33,11 @@ func (page *NewCollection) Setup() error {
 					name := page.collectionName.GetText()
 					err := page.onAddNewCollection(name)
 					if err != nil {
-						// TODO: show error popup
+						page.onShowPopup(popup.POPUP_ERROR, fmt.Sprintf("Unable to create a new collection due to %s", err.Error()))
 						return
 					}
 					page.onPopPage()
-					// TODO: show success popup
+					page.onShowPopup(popup.POPUP_SUCCESS, "Collection was created successfully")
 				},
 			),
 			Proportion: 1,
