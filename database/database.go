@@ -11,7 +11,7 @@ import (
 )
 
 //go:embed schema.sql
-var SQL string
+var SQL_SCHEMA string
 
 type Database struct {
 	conn *sql.DB
@@ -22,7 +22,7 @@ func New(dbPath string) (*Database, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to open SQLite3 database: %s\n", err)
 	}
-	if _, err := conn.Exec(SQL); err != nil {
+	if _, err := conn.Exec(SQL_SCHEMA); err != nil {
 		return nil, err
 	}
 	return &Database{conn: conn}, nil
