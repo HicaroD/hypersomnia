@@ -21,13 +21,13 @@ of the box.
 
 ### Global
 
-| Shortcut       | Action                    |
-| -------------- | ------------------------- |
-| <kbd>C-w</kbd> | Go to welcome page        |
-| <kbd>C-e</kbd> | Go to endpoint page       |
-| <kbd>C-h</kbd> | Go to help page           |
-| <kbd>C-n</kbd> | Go to new collection page |
-| <kbd>C-c</kbd> | Close application         |
+| Shortcut       | Action              |
+| -------------- | ------------------- |
+| <kbd>C-w</kbd> | Go to welcome page  |
+| <kbd>C-e</kbd> | Go to endpoint page |
+| <kbd>C-h</kbd> | Go to help page     |
+| <kbd>C-n</kbd> | Add new collection  |
+| <kbd>C-c</kbd> | Close application   |
 
 ### Endpoints
 
