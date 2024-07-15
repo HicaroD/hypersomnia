@@ -40,7 +40,7 @@ type Manager struct {
 	NewCollection *NewCollection
 }
 
-func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive)) (*Manager, error) {
+func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive), popPage func()) (*Manager, error) {
 	// NOTE: should I initialize everything all at once?
 	ppm := &popup.PopupManager{
 		OnShowPopup: showPopup,
@@ -70,7 +70,8 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 	}
 
 	newCollection := &NewCollection{
-		OnAddNewCollection: database.AddNewCollection,
+		onAddNewCollection: database.AddNewCollection,
+		onPopPage: popPage,
 	}
 	err = newCollection.Setup()
 	if err != nil {

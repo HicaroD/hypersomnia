@@ -6,13 +6,17 @@ import (
 	"github.com/rivo/tview"
 )
 
-type OnAddNewCollectionCallback func(name string) error
+type (
+	OnAddNewCollectionCallback func(name string) error
+	OnPopPageCallback          func()
+)
 
 type NewCollection struct {
 	main           *tview.Flex
 	collectionName *tview.InputField
 
-	OnAddNewCollection OnAddNewCollectionCallback
+	onAddNewCollection OnAddNewCollectionCallback
+	onPopPage          OnPopPageCallback
 }
 
 func (page *NewCollection) Setup() error {
@@ -28,12 +32,12 @@ func (page *NewCollection) Setup() error {
 				/* border= */ true,
 				func() {
 					name := page.collectionName.GetText()
-					err := page.OnAddNewCollection(name)
+					err := page.onAddNewCollection(name)
 					if err != nil {
 						// TODO: show popup here as well
 						panic(err)
 					}
-					// TODO: close widget
+					page.onPopPage()
 				},
 			),
 			Proportion: 1,
@@ -44,7 +48,7 @@ func (page *NewCollection) Setup() error {
 				utils.COLOR_DARK_GREY,
 				/* border= */ true,
 				func() {
-					// TODO: close widget
+					page.onPopPage()
 				},
 			),
 			Proportion: 1,
