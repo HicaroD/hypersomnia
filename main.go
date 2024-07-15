@@ -152,7 +152,7 @@ func main() {
 	app.SetRoot(hyperPages, true)
 
 	navigator := nav.New(hyperPages)
-	pageManager, err := pages.New(client, database, navigator.ShowPopup)
+	pageManager, err := pages.New(client, database, navigator.ShowPopup, navigator.Pop)
 	if err != nil {
 		exitAppWithUnexpectedError()
 		return

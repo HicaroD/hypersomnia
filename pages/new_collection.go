@@ -34,10 +34,11 @@ func (page *NewCollection) Setup() error {
 					name := page.collectionName.GetText()
 					err := page.onAddNewCollection(name)
 					if err != nil {
-						// TODO: show popup here as well
-						panic(err)
+						// TODO: show error popup
+						return
 					}
 					page.onPopPage()
+					// TODO: show success popup
 				},
 			),
 			Proportion: 1,
