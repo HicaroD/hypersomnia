@@ -10,6 +10,7 @@ var KEY_TO_PAGE map[tcell.Key]pages.Index = map[tcell.Key]pages.Index{
 	tcell.KeyCtrlW: pages.WELCOME,
 	tcell.KeyCtrlE: pages.ENDPOINTS,
 	tcell.KeyCtrlH: pages.HELP,
+	tcell.KeyCtrlN: pages.NEW_COLLECTION,
 }
 
 type Navigator struct {
