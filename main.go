@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
-	"time"
 
 	db "github.com/HicaroD/hypersomnia/database"
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
@@ -17,6 +15,10 @@ import (
 )
 
 var EXIT_MESSAGE string = "an unexpected error ocurred, please see the log file, go to https://github.com/HicaroD/hypersomnia and report an issue!"
+
+var (
+	DEFAULT_HTTP_CLIENT_TIMEOUT = 30
+)
 
 func exitAppWithUnexpectedError() {
 	fmt.Println(EXIT_MESSAGE)
@@ -127,13 +129,7 @@ func main() {
 
 	logger.Info.Println("Database initialized successfuly")
 
-	client := hyperHttp.New(
-		&http.Client{
-			// TODO: 30 seconds by default, but user should be able to decide the
-			// timeout
-			Timeout: 30 * time.Second,
-		},
-	)
+	client := hyperHttp.New(DEFAULT_HTTP_CLIENT_TIMEOUT)
 
 	app := tview.NewApplication()
 	app.EnablePaste(true)

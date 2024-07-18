@@ -7,13 +7,17 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type HttpClient struct {
 	client *http.Client
 }
 
-func New(client *http.Client) *HttpClient {
+func New(timeout int) *HttpClient {
+	client := &http.Client{
+		Timeout: time.Duration(timeout) * time.Second,
+	}
 	return &HttpClient{client}
 }
 
