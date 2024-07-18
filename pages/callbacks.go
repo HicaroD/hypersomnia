@@ -9,6 +9,7 @@ import (
 type (
 	OnRequestCallback          func(http.Request) (*http.Response, error)
 	OnListEndpointsCallback    func() ([]*models.Endpoint, error)
+	OnListCollectionsCallback  func() ([]*models.Collection, error)
 	OnShowPopupCallback        func(kind popup.PopupKind, text string)
 	OnAddNewCollectionCallback func(name string) error
 	OnPopPageCallback          func()

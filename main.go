@@ -41,6 +41,8 @@ func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pag
 
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
+	// TODO: Ctrl+Backspace causes Ctrl+H to be triggered, which is totally
+	// incorrect
 	pageIndex, ok := nav.KEY_TO_PAGE[pressedKey]
 	if ok {
 		page, err := hyper.pageManager.GetPage(pageIndex)

@@ -6,6 +6,7 @@ import (
 	"github.com/HicaroD/hypersomnia/popup"
 	utils "github.com/HicaroD/hypersomnia/utils"
 	widgets "github.com/HicaroD/hypersomnia/widgets"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -19,7 +20,6 @@ type NewCollection struct {
 }
 
 func (page *NewCollection) Setup() error {
-
 	collectionNameInput := widgets.InputField("My new collection")
 	page.collectionName = collectionNameInput
 
@@ -70,6 +70,13 @@ func (page *NewCollection) Setup() error {
 		},
 	}
 	modal := widgets.Modal(items)
+	modal.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		pressedKey := event.Key()
+		if pressedKey == tcell.KeyEsc {
+			page.onPopPage()
+		}
+		return event
+	})
 	page.main = modal
 
 	return nil

@@ -13,11 +13,12 @@ type Index int
 
 const (
 	WELCOME Index = iota
-	ENDPOINTS
-	POPUP
 	HELP
+	ENDPOINTS
 	NEW_COLLECTION
 	LIST_COLLECTIONS
+
+	POPUP
 )
 
 type Page interface {
@@ -27,29 +28,33 @@ type Page interface {
 }
 
 var NAMES map[Index]string = map[Index]string{
-	WELCOME:        "welcome",
-	ENDPOINTS:      "endpoints",
-	POPUP:          "popup",
-	HELP:           "help",
-	NEW_COLLECTION: "new_collection",
+	WELCOME:          "welcome",
+	ENDPOINTS:        "endpoints",
+	POPUP:            "popup",
+	HELP:             "help",
+	NEW_COLLECTION:   "new_collection",
+	LIST_COLLECTIONS: "list_collections",
 }
 
 type Manager struct {
-	Welcome       *WelcomePage
-	Endpoints     *EndpointsPage
-	Help          *HelpPage
-	NewCollection *NewCollection
+	Welcome         *WelcomePage
+	Endpoints       *EndpointsPage
+	Help            *HelpPage
+	NewCollection   *NewCollection
+	ListCollections *ListCollections
 }
 
 func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive), popPage OnPopPageCallback) (*Manager, error) {
 	// NOTE: should I initialize everything all at once?
+	var err error
+
 	ppm := &popup.PopupManager{
 		OnShowPopup: showPopup,
 	}
 	ppm.Setup()
 
 	welcome := &WelcomePage{}
-	err := welcome.Setup()
+	err = welcome.Setup()
 	if err != nil {
 		return nil, err
 	}
@@ -80,11 +85,21 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		return nil, err
 	}
 
+	listCollections := &ListCollections{
+		onListCollections: database.ListCollections,
+		onPopPage:         popPage,
+	}
+	err = listCollections.Setup()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Manager{
-		Welcome:       welcome,
-		Endpoints:     endpoints,
-		Help:          help,
-		NewCollection: newCollection,
+		Welcome:         welcome,
+		Endpoints:       endpoints,
+		Help:            help,
+		NewCollection:   newCollection,
+		ListCollections: listCollections,
 	}, nil
 }
 
@@ -99,6 +114,8 @@ func (pm *Manager) GetPage(index Index) (Page, error) {
 		page = pm.Endpoints
 	case NEW_COLLECTION:
 		page = pm.NewCollection
+	case LIST_COLLECTIONS:
+		page = pm.ListCollections
 	default:
 		return nil, fmt.Errorf("unimplemented page: %s", NAMES[index])
 	}
