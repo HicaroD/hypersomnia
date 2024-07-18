@@ -17,6 +17,7 @@ const (
 	POPUP
 	HELP
 	NEW_COLLECTION
+	LIST_COLLECTIONS
 )
 
 type Page interface {
@@ -40,7 +41,7 @@ type Manager struct {
 	NewCollection *NewCollection
 }
 
-func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive), popPage func()) (*Manager, error) {
+func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive), popPage OnPopPageCallback) (*Manager, error) {
 	// NOTE: should I initialize everything all at once?
 	ppm := &popup.PopupManager{
 		OnShowPopup: showPopup,
