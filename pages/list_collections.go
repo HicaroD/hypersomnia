@@ -36,13 +36,12 @@ func (page *ListCollections) Setup() error {
 		// from this collection
 	})
 
-	main := widgets.Modal([]widgets.Item{
+	main := widgets.Modal("Collections", []widgets.Item{
 		{
 			Item:       collectionList,
 			Proportion: 1,
 		},
 	})
-
 	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		pressedKey := event.Key()
 		if pressedKey == tcell.KeyEsc {

@@ -65,7 +65,7 @@ type Item struct {
 	Proportion int
 }
 
-func Modal(items []Item) *tview.Flex {
+func Modal(title string, items []Item) *tview.Flex {
 	content := tview.NewFlex()
 	content.SetDirection(tview.FlexRow)
 	for _, item := range items {
@@ -81,6 +81,10 @@ func Modal(items []Item) *tview.Flex {
 			AddItem(content, 0, 1, true).
 			AddItem(nil, 0, 1, false), 0, 1, true).
 		AddItem(nil, 0, 1, false)
+
+	if title != "" {
+		content.SetTitle(title)
+	}
 
 	return modal
 }

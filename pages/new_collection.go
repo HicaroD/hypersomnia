@@ -57,27 +57,23 @@ func (page *NewCollection) Setup() error {
 
 	items := []widgets.Item{
 		{
-			Item:       widgets.Text("What is the name of your new collection?"),
-			Proportion: 1,
-		},
-		{
 			Item:       collectionNameInput,
-			Proportion: 3,
+			Proportion: 4,
 		},
 		{
 			Item:       buttons,
 			Proportion: 1,
 		},
 	}
-	modal := widgets.Modal(items)
-	modal.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	main := widgets.Modal("Add a new collection", items)
+	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		pressedKey := event.Key()
 		if pressedKey == tcell.KeyEsc {
 			page.onPopPage()
 		}
 		return event
 	})
-	page.main = modal
+	page.main = main
 
 	return nil
 }
