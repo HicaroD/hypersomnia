@@ -11,6 +11,7 @@ var KEY_TO_PAGE map[tcell.Key]pages.Index = map[tcell.Key]pages.Index{
 	tcell.KeyCtrlE: pages.ENDPOINTS,
 	tcell.KeyCtrlH: pages.HELP,
 	tcell.KeyCtrlN: pages.NEW_COLLECTION,
+	tcell.KeyCtrlM: pages.NEW_ENDPOINT,
 	tcell.KeyCtrlL: pages.LIST_COLLECTIONS,
 }
 

@@ -39,9 +39,7 @@ func (page *NewCollection) Setup() error {
 				"Cancel",
 				utils.COLOR_DARK_GREY,
 				/* border= */ true,
-				func() {
-					page.onPopPage()
-				},
+				page.onPopPage,
 			),
 			Proportion: 1,
 		},

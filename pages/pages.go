@@ -15,6 +15,7 @@ const (
 	WELCOME Index = iota
 	HELP
 	ENDPOINTS
+	NEW_ENDPOINT
 	NEW_COLLECTION
 	LIST_COLLECTIONS
 
@@ -33,6 +34,7 @@ var NAMES map[Index]string = map[Index]string{
 	POPUP:            "popup",
 	HELP:             "help",
 	NEW_COLLECTION:   "new_collection",
+	NEW_ENDPOINT:     "new_endpoint",
 	LIST_COLLECTIONS: "list_collections",
 }
 
@@ -42,6 +44,7 @@ type Manager struct {
 	Help            *HelpPage
 	NewCollection   *NewCollection
 	ListCollections *ListCollections
+	NewEndpoint     *NewEndpoint
 }
 
 func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive), popPage OnPopPageCallback) (*Manager, error) {
@@ -89,6 +92,14 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		return nil, err
 	}
 
+	newEndpoint := &NewEndpoint{
+		onPopPage: popPage,
+	}
+	err = newEndpoint.Setup()
+	if err != nil {
+		return nil, err
+	}
+
 	help := &HelpPage{}
 	err = help.Setup()
 	if err != nil {
@@ -101,6 +112,7 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		Help:            help,
 		NewCollection:   newCollection,
 		ListCollections: listCollections,
+		NewEndpoint:     newEndpoint,
 	}, nil
 }
 
@@ -115,6 +127,8 @@ func (pm *Manager) GetPage(index Index) (Page, error) {
 		page = pm.Endpoints
 	case NEW_COLLECTION:
 		page = pm.NewCollection
+	case NEW_ENDPOINT:
+		page = pm.NewEndpoint
 	case LIST_COLLECTIONS:
 		page = pm.ListCollections
 	default:
