@@ -69,12 +69,6 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		return nil, err
 	}
 
-	help := &HelpPage{}
-	err = help.Setup()
-	if err != nil {
-		return nil, err
-	}
-
 	listCollections := &ListCollections{
 		onListCollections: database.ListCollections,
 		onPopPage:         popPage,
@@ -91,6 +85,12 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		onShowPopup:             ppm.ShowPopup,
 	}
 	err = newCollection.Setup()
+	if err != nil {
+		return nil, err
+	}
+
+	help := &HelpPage{}
+	err = help.Setup()
 	if err != nil {
 		return nil, err
 	}
