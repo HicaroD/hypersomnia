@@ -29,9 +29,8 @@ func New(dbPath string) (*Database, error) {
 }
 
 func (db *Database) AddNewCollection(name string) error {
-	// TODO: add new collection to database
-	// See https://go.dev/doc/database/sql-injection for avoiding SQL injection
-	return nil
+	_, err := db.conn.Exec("INSERT INTO collection (name) VALUES(?)", name)
+	return err
 }
 
 func (db *Database) ListCollections() ([]*models.Collection, error) {
