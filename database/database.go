@@ -33,6 +33,11 @@ func (db *Database) AddNewCollection(name string) error {
 	return err
 }
 
+func (db *Database) AddNewEndpointToCollection(method string, endpoint string, collectionId int) error {
+	_, err := db.conn.Exec("INSERT INTO endpoint (method, url, collection_id) VALUES(?, ?, ?)", method, endpoint, collectionId)
+	return err
+}
+
 func (db *Database) ListCollections() ([]*models.Collection, error) {
 	rows, err := db.conn.Query("SELECT * FROM collection;")
 	if err != nil {
