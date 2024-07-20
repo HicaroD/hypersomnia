@@ -16,12 +16,15 @@ type NewEndpoint struct {
 }
 
 func (page *NewEndpoint) Setup() error {
+	// collectionsDropdown := widgets.Dropdown()
+
 	buttons := widgets.Row([]widgets.Item{
 		{
 			Item: widgets.TextButton(
 				"Confirm",
 				utils.COLOR_DARK_GREY,
 				/* border= */ true,
+				utils.COLOR_GREEN,
 				page.addNewEndpoint,
 			),
 			Proportion: 1,
@@ -31,6 +34,7 @@ func (page *NewEndpoint) Setup() error {
 				"Cancel",
 				utils.COLOR_DARK_GREY,
 				/* border= */ true,
+				utils.COLOR_RED,
 				page.onPopPage,
 			),
 			Proportion: 1,
@@ -38,10 +42,8 @@ func (page *NewEndpoint) Setup() error {
 	})
 
 	items := []widgets.Item{
-		// {
-		// 	Item:       collectionNameInput,
-		// 	Proportion: 4,
-		// },
+		// TODO: add dropdown for listing all collections
+		// TODO: add text input field for the endpoint
 		{
 			Item:       buttons,
 			Proportion: 1,

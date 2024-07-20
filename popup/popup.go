@@ -51,13 +51,13 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 	switch kind {
 	case POPUP_ERROR:
 		title = "Error"
-		borderColor = utils.COLOR_POPUP_RED
+		borderColor = utils.COLOR_RED
 	case POPUP_WARNING:
 		title = "Warning"
 		borderColor = utils.COLOR_POPUP_YELLOW
 	case POPUP_SUCCESS:
 		title = "Success"
-		borderColor = utils.COLOR_POPUP_GREEN
+		borderColor = utils.COLOR_GREEN
 	}
 
 	ppm.content.SetTitle(title)

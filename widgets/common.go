@@ -28,12 +28,13 @@ func TextArea(title string) *tview.TextArea {
 	return textArea
 }
 
-func TextButton(title string, backgroundColor tcell.Color, border bool, onPressed func()) *tview.Button {
+func TextButton(title string, backgroundColor tcell.Color, border bool, borderColor tcell.Color, onPressed func()) *tview.Button {
 	button := tview.NewButton(title)
 	button.SetTitleColor(backgroundColor)
 	button.SetStyle(tcell.StyleDefault.Background(backgroundColor))
 	button.SetLabelColorActivated(utils.COLOR_BLACK)
 	button.SetBorder(border)
+	button.SetBorderColor(borderColor)
 	button.SetMouseCapture(func(action tview.MouseAction, event *tcell.EventMouse) (tview.MouseAction, *tcell.EventMouse) {
 		if action == tview.MouseLeftClick {
 			onPressed()
