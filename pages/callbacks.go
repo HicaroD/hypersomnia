@@ -12,5 +12,6 @@ type (
 	OnListCollectionsCallback  func() ([]*models.Collection, error)
 	OnShowPopupCallback        func(kind popup.PopupKind, text string)
 	OnAddNewCollectionCallback func(name string) error
+	OnUpdateCollectionList     func() error
 	OnPopPageCallback          func()
 )

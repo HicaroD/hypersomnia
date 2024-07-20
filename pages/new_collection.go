@@ -14,9 +14,10 @@ type NewCollection struct {
 	main           *tview.Flex
 	collectionName *tview.InputField
 
-	onAddNewCollection OnAddNewCollectionCallback
-	onPopPage          OnPopPageCallback
-	onShowPopup        OnShowPopupCallback
+	onUpdateCollectionsList OnUpdateCollectionList
+	onAddNewCollection      OnAddNewCollectionCallback
+	onPopPage               OnPopPageCallback
+	onShowPopup             OnShowPopupCallback
 }
 
 func (page *NewCollection) Setup() error {
@@ -29,16 +30,7 @@ func (page *NewCollection) Setup() error {
 				"Confirm",
 				utils.COLOR_DARK_GREY,
 				/* border= */ true,
-				func() {
-					name := page.collectionName.GetText()
-					err := page.onAddNewCollection(name)
-					if err != nil {
-						page.onShowPopup(popup.POPUP_ERROR, fmt.Sprintf("Unable to create a new collection due to %s", err.Error()))
-						return
-					}
-					page.onPopPage()
-					page.onShowPopup(popup.POPUP_SUCCESS, "Collection was created successfully")
-				},
+				page.addNewCollection,
 			),
 			Proportion: 1,
 		},
@@ -68,14 +60,37 @@ func (page *NewCollection) Setup() error {
 	main := widgets.Modal("Add a new collection", items)
 	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		pressedKey := event.Key()
-		if pressedKey == tcell.KeyEsc {
+		switch pressedKey {
+		case tcell.KeyEsc:
 			page.onPopPage()
+		case tcell.KeyEnter:
+			page.addNewCollection()
 		}
 		return event
 	})
 	page.main = main
 
 	return nil
+}
+
+func (page *NewCollection) addNewCollection() {
+	var err error
+
+	name := page.collectionName.GetText()
+	err = page.onAddNewCollection(name)
+	if err != nil {
+		page.onShowPopup(popup.POPUP_ERROR, fmt.Sprintf("Unable to create a new collection due to %s", err.Error()))
+		return
+	}
+
+	page.onPopPage()
+	page.onShowPopup(popup.POPUP_SUCCESS, "Collection was created successfully")
+
+	err = page.onUpdateCollectionsList()
+	if err != nil {
+		page.onShowPopup(popup.POPUP_ERROR, fmt.Sprintf("Unable to update collection list due to %s", err.Error()))
+		return
+	}
 }
 
 func (page *NewCollection) Index() Index          { return NEW_COLLECTION }

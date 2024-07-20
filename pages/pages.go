@@ -75,21 +75,22 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		return nil, err
 	}
 
-	newCollection := &NewCollection{
-		onAddNewCollection: database.AddNewCollection,
-		onPopPage:          popPage,
-		onShowPopup:        ppm.ShowPopup,
-	}
-	err = newCollection.Setup()
-	if err != nil {
-		return nil, err
-	}
-
 	listCollections := &ListCollections{
 		onListCollections: database.ListCollections,
 		onPopPage:         popPage,
 	}
 	err = listCollections.Setup()
+	if err != nil {
+		return nil, err
+	}
+
+	newCollection := &NewCollection{
+		onUpdateCollectionsList: listCollections.UpdateCollectionList,
+		onAddNewCollection:      database.AddNewCollection,
+		onPopPage:               popPage,
+		onShowPopup:             ppm.ShowPopup,
+	}
+	err = newCollection.Setup()
 	if err != nil {
 		return nil, err
 	}
