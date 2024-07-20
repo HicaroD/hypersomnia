@@ -21,7 +21,7 @@ func (page *WelcomePage) Setup() error {
 	welcomeText.SetText(WELCOME_MESSAGE)
 	welcomeText.SetTextColor(tcell.ColorDodgerBlue)
 	welcomeText.SetTextAlign(tview.AlignCenter)
-	welcomeText.SetBackgroundColor(utils.COLOR_WELCOME_DARK_BACKGROUND)
+	welcomeText.SetBackgroundColor(utils.COLOR_DARK)
 
 	page.main = welcomeText
 	return nil

@@ -43,6 +43,7 @@ func (page *NewEndpoint) Setup() error {
 
 	items := []widgets.Item{
 		// TODO: add dropdown for listing all collections
+		// TODO: add dropdown for listing all possible HTTP methods
 		// TODO: add text input field for the endpoint
 		{
 			Item:       buttons,

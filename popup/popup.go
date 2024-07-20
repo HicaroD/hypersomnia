@@ -54,7 +54,7 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 		borderColor = utils.COLOR_RED
 	case POPUP_WARNING:
 		title = "Warning"
-		borderColor = utils.COLOR_POPUP_YELLOW
+		borderColor = utils.COLOR_YELLOW
 	case POPUP_SUCCESS:
 		title = "Success"
 		borderColor = utils.COLOR_GREEN

@@ -20,7 +20,7 @@ func (page *HelpPage) Setup() error {
 	help.SetText(HELP_MESSAGE)
 	help.SetTextColor(tcell.ColorDodgerBlue)
 	help.SetTextAlign(tview.AlignCenter)
-	help.SetBackgroundColor(utils.COLOR_WELCOME_DARK_BACKGROUND)
+	help.SetBackgroundColor(utils.COLOR_DARK)
 	page.main = help
 	return nil
 }
