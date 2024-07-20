@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
-	"time"
 
 	db "github.com/HicaroD/hypersomnia/database"
 	hyperHttp "github.com/HicaroD/hypersomnia/http"
@@ -18,11 +16,13 @@ import (
 
 var EXIT_MESSAGE string = "an unexpected error ocurred, please see the log file, go to https://github.com/HicaroD/hypersomnia and report an issue!"
 
-func exitAppWithUnexpectedError(exit bool) {
+var (
+	DEFAULT_HTTP_CLIENT_TIMEOUT = 30
+)
+
+func exitAppWithUnexpectedError() {
 	fmt.Println(EXIT_MESSAGE)
-	if exit {
-		os.Exit(1)
-	}
+	os.Exit(1)
 }
 
 type Hyper struct {
@@ -41,20 +41,22 @@ func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pag
 
 func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
+	// TODO: Ctrl+Backspace causes Ctrl+H to be triggered, which is totally
+	// incorrect
 	pageIndex, ok := nav.KEY_TO_PAGE[pressedKey]
 	if ok {
 		page, err := hyper.pageManager.GetPage(pageIndex)
 		if err != nil {
 			// TODO: show popup here
 			logger.Error.Printf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			exitAppWithUnexpectedError(true)
+			exitAppWithUnexpectedError()
 		}
 
-		err = hyper.navigator.Navigate(page)
+		err = hyper.navigator.Navigate(page, false)
 		if err != nil {
 			// TODO: show popup here
 			logger.Error.Printf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			exitAppWithUnexpectedError(true)
+			exitAppWithUnexpectedError()
 		}
 		return event
 	}
@@ -79,7 +81,7 @@ func (hyper *Hyper) Run() {
 		return
 	}
 
-	err = hyper.navigator.Navigate(welcomePage)
+	err = hyper.navigator.Navigate(welcomePage, true)
 	if err != nil {
 		// TODO: show popup here
 		logger.Error.Printf("unable to navigate to welcome page due to the following error:\n%s", err)
@@ -97,14 +99,14 @@ func main() {
 	err := logger.InitLogFile()
 	if err != nil {
 		logger.Error.Printf("unable to init logger: %s\n", err)
-		exitAppWithUnexpectedError(false)
+		exitAppWithUnexpectedError()
 		return
 	}
 	defer func() {
 		err := logger.Close()
 		if err != nil {
 			logger.Error.Printf("unable to close log file: %s\n", err)
-			exitAppWithUnexpectedError(false)
+			exitAppWithUnexpectedError()
 			return
 		}
 	}()
@@ -115,27 +117,21 @@ func main() {
 	database, err := db.New("endpoints.sqlite")
 	if err != nil {
 		logger.Error.Printf("unable to open SQLite3 database: %s\n", err)
-		exitAppWithUnexpectedError(false)
+		exitAppWithUnexpectedError()
 		return
 	}
 	defer func() {
 		err := database.Close()
 		if err != nil {
 			logger.Error.Printf("unable to close SQLite3 database: %s\n", err)
-			exitAppWithUnexpectedError(false)
+			exitAppWithUnexpectedError()
 			return
 		}
 	}()
 
 	logger.Info.Println("Database initialized successfuly")
 
-	client := hyperHttp.New(
-		&http.Client{
-			// TODO: 30 seconds by default, but user should be able to decide the
-			// timeout
-			Timeout: 30 * time.Second,
-		},
-	)
+	client := hyperHttp.New(DEFAULT_HTTP_CLIENT_TIMEOUT)
 
 	app := tview.NewApplication()
 	app.EnablePaste(true)
@@ -145,9 +141,9 @@ func main() {
 	app.SetRoot(hyperPages, true)
 
 	navigator := nav.New(hyperPages)
-	pageManager, err := pages.New(client, database, navigator.ShowPopup)
+	pageManager, err := pages.New(client, database, navigator.ShowPopup, navigator.Pop)
 	if err != nil {
-		exitAppWithUnexpectedError(false)
+		exitAppWithUnexpectedError()
 		return
 	}
 

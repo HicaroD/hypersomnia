@@ -5,17 +5,11 @@ import (
 	"github.com/HicaroD/hypersomnia/logger"
 	"github.com/HicaroD/hypersomnia/models"
 	"github.com/HicaroD/hypersomnia/popup"
-	utils "github.com/HicaroD/hypersomnia/utils"
-	widgets "github.com/HicaroD/hypersomnia/widgets"
+	"github.com/HicaroD/hypersomnia/utils"
+	"github.com/HicaroD/hypersomnia/widgets"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-)
-
-type (
-	OnRequestCallback       func(hyperHttp.Request) (*hyperHttp.Response, error)
-	OnListEndpointsCallback func() ([]*models.Endpoint, error)
-	ShowPopupCallback       func(kind popup.PopupKind, text string)
 )
 
 type EndpointsPage struct {
@@ -30,7 +24,7 @@ type EndpointsPage struct {
 
 	onRequest       OnRequestCallback
 	onListEndpoints OnListEndpointsCallback
-	showPopup       ShowPopupCallback
+	showPopup       OnShowPopupCallback
 }
 
 func (page *EndpointsPage) Setup() error {

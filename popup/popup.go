@@ -11,6 +11,7 @@ type PopupKind int
 const (
 	POPUP_ERROR PopupKind = iota
 	POPUP_WARNING
+	POPUP_SUCCESS
 )
 
 type ShowPopupWidgetCallback func(tview.Primitive)
@@ -54,6 +55,9 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 	case POPUP_WARNING:
 		title = "Warning"
 		borderColor = utils.COLOR_POPUP_YELLOW
+	case POPUP_SUCCESS:
+		title = "Success"
+		borderColor = utils.COLOR_POPUP_GREEN
 	}
 
 	ppm.content.SetTitle(title)

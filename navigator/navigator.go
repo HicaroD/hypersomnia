@@ -10,6 +10,8 @@ var KEY_TO_PAGE map[tcell.Key]pages.Index = map[tcell.Key]pages.Index{
 	tcell.KeyCtrlW: pages.WELCOME,
 	tcell.KeyCtrlE: pages.ENDPOINTS,
 	tcell.KeyCtrlH: pages.HELP,
+	tcell.KeyCtrlN: pages.NEW_COLLECTION,
+	tcell.KeyCtrlL: pages.LIST_COLLECTIONS,
 }
 
 type Navigator struct {
@@ -28,10 +30,14 @@ func New(p *tview.Pages) *Navigator {
 	return &navigator
 }
 
-func (navigator *Navigator) Navigate(page pages.Page) error {
+func (navigator *Navigator) Navigate(page pages.Page, addAndSwitch bool) error {
 	pageIndex := page.Index()
 	name := pages.NAMES[pageIndex]
-	navigator.pages = navigator.pages.AddAndSwitchToPage(name, page.Page(), true)
+	if addAndSwitch {
+		navigator.pages = navigator.pages.AddAndSwitchToPage(name, page.Page(), true)
+	} else {
+		navigator.pages = navigator.pages.AddPage(name, page.Page(), true, true)
+	}
 	navigator.PreviousPage = navigator.CurrentPage
 	navigator.CurrentPage = pageIndex
 	return nil

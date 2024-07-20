@@ -26,6 +26,7 @@ of the box.
 | <kbd>C-w</kbd> | Go to welcome page  |
 | <kbd>C-e</kbd> | Go to endpoint page |
 | <kbd>C-h</kbd> | Go to help page     |
+| <kbd>C-n</kbd> | Add new collection  |
 | <kbd>C-c</kbd> | Close application   |
 
 ### Endpoints
