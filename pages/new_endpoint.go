@@ -1,8 +1,9 @@
 package pages
 
 import (
-	// "fmt"
-	// "github.com/HicaroD/hypersomnia/popup"
+	"fmt"
+
+	"github.com/HicaroD/hypersomnia/popup"
 	utils "github.com/HicaroD/hypersomnia/utils"
 	widgets "github.com/HicaroD/hypersomnia/widgets"
 	"github.com/gdamore/tcell/v2"
@@ -10,13 +11,40 @@ import (
 )
 
 type NewEndpoint struct {
-	main *tview.Flex
+	main       *tview.Flex
+	collection *tview.DropDown
+	method     *tview.DropDown
+	endpoint   *tview.InputField
 
-	onPopPage OnPopPageCallback
+	onAddNewEndpoint OnAddNewEndpointCallback
+	onShowPopup      OnShowPopupCallback
+	onPopPage        OnPopPageCallback
 }
 
 func (page *NewEndpoint) Setup() error {
-	// collectionsDropdown := widgets.Dropdown()
+	// TODO: get list of collections from database
+	// TODO: notify user with popup to add a new collection before adding a new
+	// endpoint (in case he does not have one)
+	collectionsDropdown := widgets.Dropdown(
+		[]string{"my collection placeholder"},
+		0,
+		func(text string, index int) {
+		},
+	)
+
+	methodDropdown := widgets.HttpMethodsDropdown()
+
+	endpointUrl := widgets.InputField("https://google.com")
+	endpointWidget := widgets.Row([]widgets.Item{
+		{
+			Item:       methodDropdown,
+			Proportion: 1,
+		},
+		{
+			Item:       endpointUrl,
+			Proportion: 4,
+		},
+	})
 
 	buttons := widgets.Row([]widgets.Item{
 		{
@@ -42,9 +70,14 @@ func (page *NewEndpoint) Setup() error {
 	})
 
 	items := []widgets.Item{
-		// TODO: add dropdown for listing all collections
-		// TODO: add dropdown for listing all possible HTTP methods
-		// TODO: add text input field for the endpoint
+		{
+			Item:       collectionsDropdown,
+			Proportion: 1,
+		},
+		{
+			Item:       endpointWidget,
+			Proportion: 1,
+		},
 		{
 			Item:       buttons,
 			Proportion: 1,
@@ -61,13 +94,28 @@ func (page *NewEndpoint) Setup() error {
 		}
 		return event
 	})
+
 	page.main = main
+	page.collection = collectionsDropdown
+	page.method = methodDropdown
+	page.endpoint = endpointUrl
 
 	return nil
 }
 
 func (page *NewEndpoint) addNewEndpoint() {
-	// TODO: add new endpoint to collection (database)
+	// TODO: get collection id
+	// collectionIndex, collection := page.collection.GetCurrentOption()
+
+	_, selectedMethod := page.method.GetCurrentOption()
+	endpoint := page.endpoint.GetText()
+
+	err := page.onAddNewEndpoint(selectedMethod, endpoint, 0)
+	if err != nil {
+		page.onShowPopup(popup.POPUP_ERROR, fmt.Sprintf("Unable to add a new endpoint to collection due to %s", err))
+		return
+	}
+
 	// TODO: update list of endpoints (UI)
 }
 

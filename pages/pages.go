@@ -93,7 +93,9 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 	}
 
 	newEndpoint := &NewEndpoint{
-		onPopPage: popPage,
+		onAddNewEndpoint: database.AddNewEndpointToCollection,
+		onShowPopup:      ppm.ShowPopup,
+		onPopPage:        popPage,
 	}
 	err = newEndpoint.Setup()
 	if err != nil {

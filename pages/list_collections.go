@@ -41,7 +41,16 @@ func (page *ListCollections) Setup() error {
 			Proportion: 1,
 		},
 	})
+
 	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		pressedKey := event.Key()
+		if pressedKey == tcell.KeyEsc {
+			page.onPopPage()
+		}
+		return event
+	})
+
+	collectionList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		pressedKey := event.Key()
 		if pressedKey == tcell.KeyEsc {
 			page.onPopPage()

@@ -33,7 +33,7 @@ func (db *Database) AddNewCollection(name string) error {
 	return err
 }
 
-func (db *Database) AddNewEndpointToCollection(method string, endpoint string, collectionId int) error {
+func (db *Database) AddNewEndpointToCollection(method, endpoint string, collectionId int) error {
 	_, err := db.conn.Exec("INSERT INTO endpoint (method, url, collection_id) VALUES(?, ?, ?)", method, endpoint, collectionId)
 	return err
 }

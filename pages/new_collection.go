@@ -58,6 +58,7 @@ func (page *NewCollection) Setup() error {
 		},
 	}
 	main := widgets.Modal("Add a new collection", items)
+
 	main.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		pressedKey := event.Key()
 		switch pressedKey {

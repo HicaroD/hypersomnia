@@ -11,6 +11,7 @@ type (
 	OnListEndpointsCallback    func() ([]*models.Endpoint, error)
 	OnListCollectionsCallback  func() ([]*models.Collection, error)
 	OnShowPopupCallback        func(kind popup.PopupKind, text string)
+	OnAddNewEndpointCallback   func(method, endpoint string, collectionId int) error
 	OnAddNewCollectionCallback func(name string) error
 	OnUpdateCollectionList     func() error
 	OnPopPageCallback          func()

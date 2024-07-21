@@ -137,8 +137,7 @@ func (page *EndpointsPage) buildEndpointsSection() tview.Primitive {
 }
 
 func (page *EndpointsPage) buildRequestSection() tview.Primitive {
-	defaultOption := 0 // GET
-	methodDropdown := widgets.Dropdown(models.ENDPOINT_METHODS, defaultOption, nil)
+	methodDropdown := widgets.HttpMethodsDropdown()
 
 	// TODO: set paste handler callback (validator) to only accept links (if necessary)
 	urlInput := widgets.InputField("https://google.com/")
