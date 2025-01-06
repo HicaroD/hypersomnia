@@ -5,7 +5,7 @@
 
 <div align="center">
   <image src="./docs/images/welcome.png" />
-  <a href="https://goreportcard.com/report/github.com/HicaroD/hypersomnia"><image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" /></a>
+  <a target="_blank" href="https://goreportcard.com/report/github.com/HicaroD/hypersomnia"><image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" /></a>
 </div>
 
 # Hypersomnia
