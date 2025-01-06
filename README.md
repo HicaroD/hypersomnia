@@ -3,9 +3,9 @@
 > _Hypersomnia is heavily under development and not ready to use at its full
 > capacity. Feel free to contribute :heart:_
 
-<div style="text-align: center;">
+<div align="center">
   <image src="./docs/images/welcome.png" />
-  <image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" />
+  <a href="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia"><image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" /></a>
 </div>
 
 # Hypersomnia
