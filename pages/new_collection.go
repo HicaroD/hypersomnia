@@ -10,7 +10,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-type NewCollection struct {
+type NewCollectionPage struct {
 	main           *tview.Flex
 	collectionName *tview.InputField
 
@@ -20,7 +20,7 @@ type NewCollection struct {
 	onShowPopup             OnShowPopupCallback
 }
 
-func (page *NewCollection) Setup() error {
+func (page *NewCollectionPage) Setup() error {
 	collectionNameInput := widgets.InputField("My new collection")
 	page.collectionName = collectionNameInput
 
@@ -73,7 +73,7 @@ func (page *NewCollection) Setup() error {
 	return nil
 }
 
-func (page *NewCollection) addNewCollection() {
+func (page *NewCollectionPage) addNewCollection() {
 	var err error
 
 	name := page.collectionName.GetText()
@@ -93,5 +93,5 @@ func (page *NewCollection) addNewCollection() {
 	}
 }
 
-func (page *NewCollection) Index() Index          { return NEW_COLLECTION }
-func (page *NewCollection) Page() tview.Primitive { return page.main }
+func (page *NewCollectionPage) Index() Index          { return NEW_COLLECTION }
+func (page *NewCollectionPage) Page() tview.Primitive { return page.main }

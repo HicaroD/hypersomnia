@@ -6,24 +6,30 @@ import (
 	"github.com/rivo/tview"
 )
 
-type PopupKind int
+type Kind int
 
 const (
-	POPUP_ERROR PopupKind = iota
+	POPUP_ERROR Kind = iota
 	POPUP_WARNING
 	POPUP_SUCCESS
 )
 
 type ShowPopupWidgetCallback func(tview.Primitive)
 
-type PopupManager struct {
-	OnShowPopup ShowPopupWidgetCallback
+type Manager struct {
+	onShowPopup ShowPopupWidgetCallback
 
 	main    *tview.Flex
 	content *tview.TextView
 }
 
-func (ppm *PopupManager) Setup() *tview.Flex {
+func New(onShowPopup ShowPopupWidgetCallback) *Manager {
+	return &Manager{
+		onShowPopup: onShowPopup,
+	}
+}
+
+func (ppm *Manager) Setup() *tview.Flex {
 	content := tview.NewTextView()
 	content.SetBorder(true)
 	content.SetBackgroundColor(utils.COLOR_DARK_GREY)
@@ -42,9 +48,9 @@ func (ppm *PopupManager) Setup() *tview.Flex {
 	return popup
 }
 
-func (ppm *PopupManager) Page() tview.Primitive { return ppm.main }
+func (ppm *Manager) Page() tview.Primitive { return ppm.main }
 
-func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
+func (ppm *Manager) ShowPopup(kind Kind, text string) {
 	var title string
 	var borderColor tcell.Color
 
@@ -64,5 +70,5 @@ func (ppm *PopupManager) ShowPopup(kind PopupKind, text string) {
 	ppm.content.SetText(text)
 	ppm.content.SetBorderColor(borderColor)
 
-	ppm.OnShowPopup(ppm.main)
+	ppm.onShowPopup(ppm.main)
 }

@@ -40,18 +40,13 @@ type Manager struct {
 	Welcome         *WelcomePage
 	Endpoints       *EndpointsPage
 	Help            *HelpPage
-	NewCollection   *NewCollection
-	ListCollections *ListCollections
+	NewCollection   *NewCollectionPage
+	ListCollections *ListCollectionsPage
 }
 
-func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tview.Primitive), popPage OnPopPageCallback) (*Manager, error) {
+func New(client *hyperHttp.HttpClient, database *db.Database, ppm *popup.Manager, popPage OnPopPageCallback) (*Manager, error) {
 	// NOTE: should I initialize everything all at once?
 	var err error
-
-	ppm := &popup.PopupManager{
-		OnShowPopup: showPopup,
-	}
-	ppm.Setup()
 
 	welcome := &WelcomePage{}
 	err = welcome.Setup()
@@ -69,7 +64,7 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		return nil, err
 	}
 
-	listCollections := &ListCollections{
+	listCollections := &ListCollectionsPage{
 		onListCollections: database.ListCollections,
 		onPopPage:         popPage,
 	}
@@ -78,7 +73,7 @@ func New(client *hyperHttp.HttpClient, database *db.Database, showPopup func(tvi
 		return nil, err
 	}
 
-	newCollection := &NewCollection{
+	newCollection := &NewCollectionPage{
 		onUpdateCollectionsList: listCollections.UpdateCollectionList,
 		onAddNewCollection:      database.AddNewCollection,
 		onPopPage:               popPage,

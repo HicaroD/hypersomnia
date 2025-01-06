@@ -9,6 +9,7 @@ import (
 	"github.com/HicaroD/hypersomnia/logger"
 	nav "github.com/HicaroD/hypersomnia/navigator"
 	"github.com/HicaroD/hypersomnia/pages"
+	"github.com/HicaroD/hypersomnia/popup"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -26,36 +27,39 @@ func exitAppWithUnexpectedError() {
 }
 
 type Hyper struct {
-	app         *tview.Application
-	navigator   *nav.Navigator
-	pageManager *pages.Manager
+	app          *tview.Application
+	navigator    *nav.Navigator
+	pageManager  *pages.Manager
+	popupManager *popup.Manager
 }
 
-func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pages.Manager) *Hyper {
+func NewHyper(app *tview.Application, navigator *nav.Navigator, pageManager *pages.Manager, popupManager *popup.Manager) *Hyper {
 	return &Hyper{
-		app:         app,
-		navigator:   navigator,
-		pageManager: pageManager,
+		app:          app,
+		navigator:    navigator,
+		pageManager:  pageManager,
+		popupManager: popupManager,
 	}
 }
 
-func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
+func (h *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	pressedKey := event.Key()
-	// TODO: Ctrl+Backspace causes Ctrl+H to be triggered, which is totally
+	// NOTE(bug): Ctrl+Backspace causes Ctrl+H to be triggered, which is totally
 	// incorrect
+	// It is a possible bug in the Tview source code
 	pageIndex, ok := nav.KEY_TO_PAGE[pressedKey]
 	if ok {
-		page, err := hyper.pageManager.GetPage(pageIndex)
+		page, err := h.pageManager.GetPage(pageIndex)
 		if err != nil {
-			// TODO: show popup here
-			logger.Error.Printf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			message := fmt.Sprintf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			h.errorAndLog(message)
 			exitAppWithUnexpectedError()
 		}
 
-		err = hyper.navigator.Navigate(page, false)
+		err = h.navigator.Navigate(page, false)
 		if err != nil {
-			// TODO: show popup here
-			logger.Error.Printf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			message := fmt.Sprintf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
+			h.errorAndLog(message)
 			exitAppWithUnexpectedError()
 		}
 		return event
@@ -63,38 +67,44 @@ func (hyper *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 
 	switch pressedKey {
 	case tcell.KeyEsc:
-		if hyper.navigator.CurrentPage == pages.POPUP {
-			hyper.navigator.Pop()
+		if h.navigator.CurrentPage == pages.POPUP {
+			h.navigator.Pop()
 		}
 	}
 
 	return event
 }
 
-func (hyper *Hyper) Run() {
-	hyper.app.SetInputCapture(hyper.InputCapture)
+func (h *Hyper) Run() {
+	h.app.SetInputCapture(h.InputCapture)
 
-	welcomePage, err := hyper.pageManager.GetPage(pages.WELCOME)
+	welcomePage, err := h.pageManager.GetPage(pages.WELCOME)
 	if err != nil {
-		// TODO: show popup here
-		logger.Error.Printf("unable to get welcome page due to the following error:\n%s", err)
+		message := fmt.Sprintf("unable to get welcome page due to the following error:\n%s", err)
+		h.errorAndLog(message)
 		return
 	}
 
-	err = hyper.navigator.Navigate(welcomePage, true)
+	err = h.navigator.Navigate(welcomePage, true)
 	if err != nil {
-		// TODO: show popup here
-		logger.Error.Printf("unable to navigate to welcome page due to the following error:\n%s", err)
+		message := fmt.Sprintf("unable to navigate to welcome page due to the following error:\n%s", err)
+		h.errorAndLog(message)
 		return
 	}
 
-	if err := hyper.app.Run(); err != nil {
-		// TODO: show popup here
-		logger.Error.Printf("unable to execute application due to the following error:\n%s", err)
+	if err := h.app.Run(); err != nil {
+		message := fmt.Sprintf("unable to execute application due to the following error:\n%s", err)
+		h.errorAndLog(message)
 		return
 	}
 }
 
+func (h *Hyper) errorAndLog(message string) {
+	logger.Error.Print(message)
+	h.popupManager.ShowPopup(popup.POPUP_ERROR, message)
+}
+
+// TODO: this function is too big, I need to refactor this
 func main() {
 	err := logger.InitLogFile()
 	if err != nil {
@@ -141,12 +151,13 @@ func main() {
 	app.SetRoot(hyperPages, true)
 
 	navigator := nav.New(hyperPages)
-	pageManager, err := pages.New(client, database, navigator.ShowPopup, navigator.Pop)
+	ppm := popup.New(navigator.ShowPopup)
+	pageManager, err := pages.New(client, database, ppm, navigator.Pop)
 	if err != nil {
 		exitAppWithUnexpectedError()
 		return
 	}
 
-	hyper := NewHyper(app, navigator, pageManager)
+	hyper := NewHyper(app, navigator, pageManager, ppm)
 	hyper.Run()
 }

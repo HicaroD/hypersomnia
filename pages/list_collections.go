@@ -10,7 +10,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-type ListCollections struct {
+type ListCollectionsPage struct {
 	main                 *tview.Flex
 	collectionListWidget *tview.List
 
@@ -20,7 +20,7 @@ type ListCollections struct {
 	onPopPage         OnPopPageCallback
 }
 
-func (page *ListCollections) Setup() error {
+func (page *ListCollectionsPage) Setup() error {
 	collectionList := tview.NewList()
 	collectionList.SetBackgroundColor(utils.COLOR_DARK_GREY)
 	collectionList.SetChangedFunc(func(index int, _ string, _ string, _ rune) {
@@ -53,7 +53,7 @@ func (page *ListCollections) Setup() error {
 	return nil
 }
 
-func (page *ListCollections) UpdateCollectionList() error {
+func (page *ListCollectionsPage) UpdateCollectionList() error {
 	collections, err := page.onListCollections()
 	if err != nil {
 		return err
@@ -67,5 +67,5 @@ func (page *ListCollections) UpdateCollectionList() error {
 	return nil
 }
 
-func (page *ListCollections) Index() Index          { return LIST_COLLECTIONS }
-func (page *ListCollections) Page() tview.Primitive { return page.main }
+func (page *ListCollectionsPage) Index() Index          { return LIST_COLLECTIONS }
+func (page *ListCollectionsPage) Page() tview.Primitive { return page.main }
