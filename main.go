@@ -52,14 +52,14 @@ func (h *Hyper) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 		page, err := h.pageManager.GetPage(pageIndex)
 		if err != nil {
 			message := fmt.Sprintf("unable to get page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			h.errorAndLog(message)
+			h.errorPopupAndLog(message)
 			exitAppWithUnexpectedError()
 		}
 
 		err = h.navigator.Navigate(page, false)
 		if err != nil {
 			message := fmt.Sprintf("unable to navigate to page with index %s due to the following error: %s", pages.NAMES[pageIndex], err)
-			h.errorAndLog(message)
+			h.errorPopupAndLog(message)
 			exitAppWithUnexpectedError()
 		}
 		return event
@@ -81,25 +81,25 @@ func (h *Hyper) Run() {
 	welcomePage, err := h.pageManager.GetPage(pages.WELCOME)
 	if err != nil {
 		message := fmt.Sprintf("unable to get welcome page due to the following error:\n%s", err)
-		h.errorAndLog(message)
+		h.errorPopupAndLog(message)
 		return
 	}
 
 	err = h.navigator.Navigate(welcomePage, true)
 	if err != nil {
 		message := fmt.Sprintf("unable to navigate to welcome page due to the following error:\n%s", err)
-		h.errorAndLog(message)
+		h.errorPopupAndLog(message)
 		return
 	}
 
 	if err := h.app.Run(); err != nil {
 		message := fmt.Sprintf("unable to execute application due to the following error:\n%s", err)
-		h.errorAndLog(message)
+		h.errorPopupAndLog(message)
 		return
 	}
 }
 
-func (h *Hyper) errorAndLog(message string) {
+func (h *Hyper) errorPopupAndLog(message string) {
 	logger.Error.Print(message)
 	h.popupManager.ShowPopup(popup.POPUP_ERROR, message)
 }
