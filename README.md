@@ -4,15 +4,17 @@
 > capacity. Feel free to contribute :heart:_
 
 <div align="center">
-  <image src="./docs/images/welcome.png" />
-  <a target="_blank" href="https://goreportcard.com/report/github.com/HicaroD/hypersomnia"><image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" /></a>
+   <image src="./docs/images/welcome.png" />
+   <a target="_blank" href="https://goreportcard.com/report/github.com/HicaroD/hypersomnia">
+      <image src="https://goreportcard.com/badge/github.com/HicaroD/hypersomnia" />
+   </a>
 </div>
 
 # Hypersomnia
 
-Your favorite tool for testing APIs.
+Your favorite tool for testing HTTP APIs.
 
-_Hypersomnia_ is a simple and blazingly fast application for testing REST APIs,
+_Hypersomnia_ is a simple and blazingly fast application for testing HTTP APIs,
 just like you do with [Insomnia](https://insomnia.rest/) or
 [Postman](https://www.postman.com/), but it runs on your terminal and works out
 of the box.
